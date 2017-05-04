@@ -17,36 +17,9 @@ class App extends Component{
 		};*/
   	}
 
-  	handleSubmit(event) {
-	    event.preventDefault();
-
-	    // Find the text field via the React ref
-	    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
-
-	    Meteor.call('shows.search', text);
-
-	    // Clear form
-	    ReactDOM.findDOMNode(this.refs.textInput).value = '';
-  	}
-
 	render() {
 		return (
 			<strong>IN APP</strong>
-
-			<div className="container">
-		        <header>
-		            <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
-		              <input
-		                type="text"
-		                ref="textInput"
-		                placeholder="Enter show name..."
-		              />
-		            </form>
-		        </header>
-		    </div>
-		    <div>
-		    	{this.handleSubmit}
-		    </div>
 		);
 	}
 }
