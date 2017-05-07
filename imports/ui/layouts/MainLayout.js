@@ -2,12 +2,9 @@ import React from 'react';
 
 //Stateless functional component, not tied to React
 
-const MainLayout = (props) => {
-	return (
-		<div className='main-layout'>
-			{props.children}
-		</div>
-	)
-}
+const MainLayout = ({children}) =>
+	<div className='main-layout'>
+		{children}
+	</div>
 
 export default MainLayout;
