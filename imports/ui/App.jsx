@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 
-import { Shows, ShowGenres, ShowDays } from '../api/shows.js';
+import { Shows } from '../api/shows.js';
 
 import Show from './Show.jsx';
 /*import AccountsUIWrapper from './AccountsUIWrapper.jsx';*/

@@ -12,36 +12,29 @@ if (Meteor.isServer) {
   	Meteor.publish('shows', function tasksPublication() {
    		return Shows.find();
   	});
+
+  	Shows._ensureIndex( { apiId: 1 }, { unique: true } );
+  	Shows._ensureIndex( { name: 1 });
 }
 
 	Meteor.methods({
 		'shows.insert'(apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary) {
-			console.log('in shows.insert');
+			/*console.log('in shows.insert');*/
 
 			check(apiId, Number);
 			check(name, String);
-			check(type, String);
-			check(language, String);
-			check(status, String);
-			check(runtime, Number);
-			check(premiered, String);
-			/*check(scheduleTime, String);*/
-			check(network, String);
-			check(country, String);
-			check(imdbId, String);
-			check(imageSmallURL, String);
-			check(imageURL, String);
-			check(summary, String);
 
 			var showId = Shows.insert({
 				apiId: apiId,
 				name: name,
 				type: type,
+				genres: genres,
 				language: language,
 				status: status,
 				runtime: runtime,
 				premiered: premiered,
 				scheduleTime: scheduleTime,
+				scheduleDays: scheduleDays,
 				network: network,
 				country: country,
 				imdbId: imdbId,
@@ -51,7 +44,7 @@ if (Meteor.isServer) {
 				createdAt: new Date()
 			});
 
-			console.log('finished inserting show');
+			/*console.log('finished inserting show');*/
 
 			return showId;
 		},
@@ -62,35 +55,10 @@ if (Meteor.isServer) {
 			Tasks.remove(showId);
 		},
 
-		/*'showGenres.insert'(showId, genre){
-			console.log('shows.insert');
-
-			check(showId, String);
-			check(genre, String);
-
-			ShowGenres.insert({
-				showId: showId,
-				genre: genre	
-			});
-
-			console.log('finished inserting genre');
-		},
-
-		'showDays.insert'(showId, day){
-			check(showId, String);
-			check(day, String);
-
-			ShowDays.insert({
-				showId: showId,
-				day: day	
-			});
-
-			console.log('finished inserting day');
-		},*/
-
 		'shows.search'(name){
-			console.log('in shows.search');
+			/*console.log('in shows.search');*/
 			check(name, String);
+
 
 			var url = "http://api.tvmaze.com/search/shows";
 			try {
@@ -102,52 +70,42 @@ if (Meteor.isServer) {
 
 				var show, schedule, apiId, officialName, type, language, status, runtime, premiered, scheduleTime, network, country, imdbId, imageSmallURL, imageURL, summary, showId, genres, scheduleDays;
 				for (var i = 0; i < resultsJSON.length; i++) {
-					show = resultsJSON[i].show;
-					schedule = show.schedule;
-					apiId = show.id;
-					officialName = show.name;
-					type = show.type;
-					language = show.language;
-					status = show.status;
-					runtime = show.runtime;
-					premiered = show.premiered;
-					scheduleTime = schedule.time;
-					scheduleDays = schedule.days;
-					network = show.network.name;
-					country = show.network.country.name;
-					imdbId = show.externals.imdb;
-					imageSmallURL = show.image.medium;
-					imageURL = show.image.original;
-					summary = show.summary;
-					genres = show.genres;
+					try{
+						show = resultsJSON[i].show;
+						schedule = show.schedule;
+						apiId = show.id;
+						officialName = show.name;
+						type = show.type;
+						language = show.language;
+						status = show.status;
+						runtime = show.runtime;
+						premiered = show.premiered;
+						scheduleTime = schedule.time;
+						scheduleDays = schedule.days;
+						network = show.network.name;
+						country = show.network.country.name;
+						imdbId = show.externals.imdb;
+						if(show.image){
+							imageSmallURL = show.image.medium;
+							imageURL = show.image.original;
+						}
+						summary = show.summary;
+						genres = show.genres;
 
-					console.log(officialName);
-					console.log(schedule);
-					console.log(genres);
+						console.log("== Show: " + officialName);
 
-					showId = Meteor.call('shows.insert', apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary);
-					console.log('ShowId: ' + showId);
+						showId = Meteor.call('shows.insert', apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary);
 
-
-					/*genres = show['genres'];*/
-
-					/*for (var i = 0; i < genres.length; i++) {
-						console.log(genres[i]);
-						genreIdMeteor.call('showGenres.insert', showId, genres[i]);
-					}*/
-
-					/*scheduleDays = schedule['days'];*/
-					/*for (var i = 0; i < scheduleDays.length; i++) {
-						console.log()
-						Meteor.call('showDays.insert', showId, scheduleDays[i]);
-					}*/
-
-					Meteor.call('episodes.search', showId, apiId);
+						Meteor.call('episodes.search', showId, apiId);
+					} catch(e) {
+						console.log(e);
+					}
 				}
 
 				return true;
 			} catch (e) {
 			      // Got a network error, timeout, or HTTP error in the 400 or 500 range.
+			      console.log(e);
 			      return false;
 			  }
 			}
