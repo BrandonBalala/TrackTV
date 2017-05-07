@@ -1,26 +1,18 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import { BrowserRouter, Route } from 'react-router';
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { render } from 'react-dom';
 
+import MainLayout from '/imports/ui/layouts/MainLayout.js';
 import App from '../../ui/App.jsx';
 
-
-export class Tracking extends Component{
-    render() {
-    	return (
-			<BrowserRouter>
-				<Route path="/" component={App}/>
-			</BrowserRouter>
-    	);
-	}
-};
-/*Meteor.startup(() => {
+Meteor.startup(() => {
     render(
-    	<Router>
-    		<Route path="/" component={ App } />
-    	</Router>
-    	, 
-    	document.getElementById('render-target')
+        <Router history={browserHistory}>
+        	<Route path='/' component={MainLayout}>
+        		<IndexRoute component={App} />
+        	</Route>
+        </Router>, 
+        document.getElementById('render-target')
     );
-});*/
+});

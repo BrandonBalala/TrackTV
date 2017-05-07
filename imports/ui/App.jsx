@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
+/*import { composeWithTracker } from 'react-komposer';*/
 
 import { Shows } from '../api/shows.js';
 
@@ -74,3 +75,15 @@ export default createContainer(() => {
     shows: Shows.find({}, { sort: { createdAt: -1 } }).fetch(),
   };
 }, App);
+
+
+/*const composer = (props, onData) => {
+  const subscription = Meteor.subscribe('shows');
+
+  	if(subscription.ready()){
+  		const shows = Shows.find({}, { sort: { createdAt: -1 } }).fetch();
+		onData( new Error( 'Something wen\'t wrong!' ), { shows } );
+	}
+};
+
+export default composeWithTracker(composer)(Show);*/
