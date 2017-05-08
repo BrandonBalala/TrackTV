@@ -13,13 +13,13 @@ class App extends Component{
 	constructor(props) {
 		super(props);
 
-		/*this.state = {
-		  
-		};*/
-  	}
+		this.state = {
+		  activeShow: null,
+		};
+ }
 
-  	handleSubmit(event){
-  		event.preventDefault();
+handleSubmit(event){
+  event.preventDefault();
 
 	    // Find the text field via the React ref
 	    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
@@ -28,44 +28,63 @@ class App extends Component{
 
 	    // Clear form
 	    ReactDOM.findDOMNode(this.refs.textInput).value = '';
-  	}
+   }
 
-  	renderEpisodes() {
-  		return this.props.shows.map((show) => {
-  			return (
-  				<Show 
-  					key={show._id} 
-  					show={show} 
-  				/>
-  			);
-  		});
-	}
+   renderShows() {
+    return this.props.shows.map((show) => {
+     return (
+      <Show 
+      key={show._id} 
+      show={show} 
+      />
+      );
+   });
+  }
 
+  renderEpisodes(){
+    /*const activeShow = this.state.activeShow;*/
 
-	render() {
-		return (
-			<div className="container">
-        		<header>
-					<h1>IN APP</h1>
-					<form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
-		              	<input
-		                	type="text"
-		                	ref="textInput"
-		                	placeholder="Type to add new shows"
-		              	/>		
-		            </form>
-        		</header>
+    if(this.state.activeShow) {
+      return (
+        <p>SHOW PICKED: {activeShow}</p>
+        );
+    }
+    else {
+      return (
+        <p>NO SHOWS PICKED</p>
+        );
+    }
+  }
 
-        		<ul>
-          			{this.renderEpisodes()}
-        		</ul>
-            </div>
-		);
-	}
+  render() {
+    return (
+     <div className="container">
+     <header>
+     <h1>IN APP</h1>
+     <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+     <input
+     type="text"
+     ref="textInput"
+     placeholder="Type to add new shows"
+     />		
+     </form>
+     </header>
+
+     <ul>
+     {this.renderShows()}
+     </ul>
+
+     <div>
+     {this.renderEpisodes()}
+     </div>
+     </div>
+     );
+  }
 }
 
 App.propTypes = {
   shows: PropTypes.array.isRequired,
+
 };
 
 export default createContainer(() => {
@@ -75,15 +94,3 @@ export default createContainer(() => {
     shows: Shows.find({}, { sort: { createdAt: -1 } }).fetch(),
   };
 }, App);
-
-
-/*const composer = (props, onData) => {
-  const subscription = Meteor.subscribe('shows');
-
-  	if(subscription.ready()){
-  		const shows = Shows.find({}, { sort: { createdAt: -1 } }).fetch();
-		onData( new Error( 'Something wen\'t wrong!' ), { shows } );
-	}
-};
-
-export default composeWithTracker(composer)(Show);*/

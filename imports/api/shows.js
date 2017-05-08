@@ -82,8 +82,17 @@ if (Meteor.isServer) {
 						premiered = show.premiered;
 						scheduleTime = schedule.time;
 						scheduleDays = schedule.days;
-						network = show.network.name;
-						country = show.network.country.name;
+
+						if(show.webChannel) {
+							//example: Netflix, Hulu, Amazon
+							network = show.webChannel.name;
+							country = show.webChannel.country.name;
+						}
+						else {
+							network = show.network.name;
+							country = show.network.country.name;
+						}
+
 						imdbId = show.externals.imdb;
 						if(show.image){
 							imageSmallURL = show.image.medium;

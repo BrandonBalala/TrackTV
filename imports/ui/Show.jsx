@@ -1,24 +1,31 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
+import { Link } from 'react-router';
 
 // Show component - represents a single show
 export default class Show extends Component {
-  render() {
-    // Give tasks a different className when they are checked off,
-    // so that we can style them nicely in CSS
-/*    const taskClassName = classnames({
-      checked: this.props.task.checked,
-      private: this.props.task.private,
-    });*/
 
+  constructor(props) {
+    super(props);
+
+
+  }
+
+  renderShowEpisodes(){
+    /*this.setState({ activeShow: this.props.show.id});*/
+  }
+  
+
+  render() {
     return (
       <li>
-        <span className="text">
-          {this.props.show.name}
-        </span>
+      <span className="text" onClick={this.renderShowEpisodes()}>
+      {this.props.show.name}
+      </span>
       </li>
-    );
+      );
   }
 }
 
