@@ -6,6 +6,11 @@ import { HTTP } from 'meteor/http'
 export const Episodes = new Mongo.Collection('episodes');
 
 if (Meteor.isServer) {
+	// This code only runs on the server
+  	Meteor.publish('episodes', function tasksPublication() {
+   		return Episodes.find();
+  	});
+
 	Episodes._ensureIndex( { showId: 1, episodeIndex: 1 }, { unique: true } );
 }
 

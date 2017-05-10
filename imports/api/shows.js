@@ -9,81 +9,98 @@ export const ShowDays = new Mongo.Collection('showDays');*/
 
 if (Meteor.isServer) {
 	// This code only runs on the server
-  	Meteor.publish('shows', function tasksPublication() {
-   		return Shows.find();
-  	});
+	Meteor.publish('shows', function tasksPublication() {
+		return Shows.find();
+	});
 
-  	Shows._ensureIndex( { apiId: 1 }, { unique: true } );
-  	Shows._ensureIndex( { name: 1 });
+	Shows._ensureIndex( { apiId: 1 }, { unique: true } );
+	Shows._ensureIndex( { name: 1 });
 }
 
-	Meteor.methods({
-		'shows.insert'(apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary) {
-			/*console.log('in shows.insert');*/
+Meteor.methods({
+	'shows.insert'(apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary) {
+		/*console.log('in shows.insert');*/
 
-			check(apiId, Number);
-			check(name, String);
+		check(apiId, Number);
+		check(name, String);
 
-			var showId = Shows.insert({
-				apiId: apiId,
-				name: name,
-				type: type,
-				genres: genres,
-				language: language,
-				status: status,
-				runtime: runtime,
-				premiered: premiered,
-				scheduleTime: scheduleTime,
-				scheduleDays: scheduleDays,
-				network: network,
-				country: country,
-				imdbId: imdbId,
-				imageSmallURL: imageSmallURL,
-				imageURL: imageURL,
-				summary: summary,
-				createdAt: new Date()
+		var showId = Shows.insert({
+			apiId: apiId,
+			name: name,
+			type: type,
+			genres: genres,
+			language: language,
+			status: status,
+			runtime: runtime,
+			premiered: premiered,
+			scheduleTime: scheduleTime,
+			scheduleDays: scheduleDays,
+			network: network,
+			country: country,
+			imdbId: imdbId,
+			imageSmallURL: imageSmallURL,
+			imageURL: imageURL,
+			summary: summary,
+			createdAt: new Date()
+		});
+
+		/*console.log('finished inserting show');*/
+
+		return showId;
+	},
+
+	'shows.remove'(showId) {
+		check(showId, String);
+
+		Tasks.remove(showId);
+	},
+
+
+
+	'shows.remove'(showId) {
+		check(showId, String);
+
+		try {
+			const result = Shows.findOne({_id: { $eq: activeShow } }).fetch();
+
+			console.log(result);
+		} catch(e) {
+			console.log(e);
+		}
+
+	},
+
+
+
+	'shows.search'(name){
+		/*console.log('in shows.search');*/
+		check(name, String);
+
+
+		var url = "http://api.tvmaze.com/search/shows";
+		try {
+			const results = HTTP.call('GET', url, {
+				params: { q: name }
 			});
 
-			/*console.log('finished inserting show');*/
+			var resultsJSON = JSON.parse(results.content);
 
-			return showId;
-		},
+			var show, schedule, apiId, officialName, type, language, status, runtime, premiered, scheduleTime, network, country, imdbId, imageSmallURL, imageURL, summary, showId, genres, scheduleDays;
+			for (var i = 0; i < resultsJSON.length; i++) {
+				try{
+					show = resultsJSON[i].show;
+					schedule = show.schedule;
+					apiId = show.id;
+					officialName = show.name;
+					type = show.type;
+					language = show.language;
+					status = show.status;
+					runtime = show.runtime;
+					premiered = show.premiered;
+					scheduleTime = schedule.time;
+					scheduleDays = schedule.days;
 
-		'shows.remove'(showId) {
-			check(showId, String);
-
-			Tasks.remove(showId);
-		},
-
-		'shows.search'(name){
-			/*console.log('in shows.search');*/
-			check(name, String);
-
-
-			var url = "http://api.tvmaze.com/search/shows";
-			try {
-				const results = HTTP.call('GET', url, {
-					params: { q: name }
-				});
-
-				var resultsJSON = JSON.parse(results.content);
-
-				var show, schedule, apiId, officialName, type, language, status, runtime, premiered, scheduleTime, network, country, imdbId, imageSmallURL, imageURL, summary, showId, genres, scheduleDays;
-				for (var i = 0; i < resultsJSON.length; i++) {
-					try{
-						show = resultsJSON[i].show;
-						schedule = show.schedule;
-						apiId = show.id;
-						officialName = show.name;
-						type = show.type;
-						language = show.language;
-						status = show.status;
-						runtime = show.runtime;
-						premiered = show.premiered;
-						scheduleTime = schedule.time;
-						scheduleDays = schedule.days;
-
-						if(show.webChannel) {
+					if(show.webChannel) {
 							//example: Netflix, Hulu, Amazon
 							network = show.webChannel.name;
 							country = show.webChannel.country.name;

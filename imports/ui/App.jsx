@@ -2,24 +2,34 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
+import autobind from 'autobind-decorator';
 /*import { composeWithTracker } from 'react-komposer';*/
 
 import { Shows } from '../api/shows.js';
+import { Episodes } from '../api/episodes.js';
 
 import Show from './Show.jsx';
+import ShowEpisodes from './ShowEpisodes.jsx';
 /*import AccountsUIWrapper from './AccountsUIWrapper.jsx';*/
 
+import smoothScroll from 'smoothscroll';
+
+@autobind
 class App extends Component{
+
 	constructor(props) {
 		super(props);
 
 		this.state = {
-		  activeShow: null,
-		};
- }
+      activeShow: null,
+    };
 
-handleSubmit(event){
-  event.preventDefault();
+/*    this.renderEpisodesSection = this.renderEpisodesSection.bind(this);
+    this.modifyActiveShow = this.modifyActiveShow.bind(this);*/
+  }
+
+  handleSubmit(event){
+    event.preventDefault();
 
 	    // Find the text field via the React ref
 	    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
@@ -35,62 +45,76 @@ handleSubmit(event){
      return (
       <Show 
       key={show._id} 
-      show={show} 
+      show={show}
+      modifyActiveShow={this.modifyActiveShow.bind(this)} 
       />
       );
    });
   }
 
-  renderEpisodes(){
-    /*const activeShow = this.state.activeShow;*/
+  renderEpisodesSection(){
+    var activeShow = this.state.activeShow;
 
-    if(this.state.activeShow) {
-      return (
-        <p>SHOW PICKED: {activeShow}</p>
-        );
+    if(activeShow) {
+        /*location.href = "#showEp";*/
+
+        /*var episodeSection = document.querySelector('#showEp');
+        smoothScroll(episodeSection);*/
+
+        return (
+          <ShowEpisodes 
+          key={activeShow} 
+          showId={activeShow}
+          />
+          );
+      }
+      else {
+        return (
+          <p>NO SHOWS PICKED</p>
+          );
+      }
     }
-    else {
+
+    modifyActiveShow(event){
+      console.log(event.target.id);
+      this.setState({ activeShow: event.target.id });
+    }
+
+    render() {
       return (
-        <p>NO SHOWS PICKED</p>
-        );
+       <div className="container">
+       <header>
+       <h1>IN APP</h1>
+       <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+       <input
+       type="text"
+       ref="textInput"
+       placeholder="Type to add new shows"
+       />		
+       </form>
+       </header>
+
+       <ul>
+       {this.renderShows()}
+       </ul>
+
+       <div>
+       {this.renderEpisodesSection()} 
+       </div>
+       </div>
+       );
     }
   }
 
-  render() {
-    return (
-     <div className="container">
-     <header>
-     <h1>IN APP</h1>
-     <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
-     <input
-     type="text"
-     ref="textInput"
-     placeholder="Type to add new shows"
-     />		
-     </form>
-     </header>
-
-     <ul>
-     {this.renderShows()}
-     </ul>
-
-     <div>
-     {this.renderEpisodes()}
-     </div>
-     </div>
-     );
-  }
-}
-
-App.propTypes = {
-  shows: PropTypes.array.isRequired,
-
-};
-
-export default createContainer(() => {
-  Meteor.subscribe('shows');
-  
-  return {
-    shows: Shows.find({}, { sort: { createdAt: -1 } }).fetch(),
+  App.propTypes = {
+    shows: PropTypes.array.isRequired,
+    activeShow: PropTypes.number
   };
-}, App);
+
+  export default createContainer(() => {
+    Meteor.subscribe('shows');
+
+    return {
+      shows: Shows.find({}, { sort: { createdAt: -1 } }).fetch(),
+    };
+  }, App);
