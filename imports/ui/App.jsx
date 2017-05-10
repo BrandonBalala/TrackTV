@@ -58,8 +58,9 @@ class App extends Component{
     if(activeShow) {
         /*location.href = "#showEp";*/
 
-        /*var episodeSection = document.querySelector('#showEp');
-        smoothScroll(episodeSection);*/
+        var episodeSection = document.querySelector('.showEp');
+        console.log(episodeSection);
+        smoothScroll(episodeSection);
 
         return (
           <ShowEpisodes 
@@ -68,15 +69,9 @@ class App extends Component{
           />
           );
       }
-      else {
-        return (
-          <p>NO SHOWS PICKED</p>
-          );
-      }
     }
 
     modifyActiveShow(event){
-      console.log(event.target.id);
       this.setState({ activeShow: event.target.id });
     }
 
@@ -84,12 +79,12 @@ class App extends Component{
       return (
        <div className="container">
        <header>
-       <h1>IN APP</h1>
+       <h1>Track TV</h1>
        <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
        <input
        type="text"
        ref="textInput"
-       placeholder="Type to add new shows"
+       placeholder="Search for a show"
        />		
        </form>
        </header>
@@ -98,7 +93,7 @@ class App extends Component{
        {this.renderShows()}
        </ul>
 
-       <div>
+       <div className="showEp">
        {this.renderEpisodesSection()} 
        </div>
        </div>
