@@ -11,7 +11,7 @@ import { Episodes } from '../api/episodes.js';
 
 import Episode from './Episode.jsx';
 
-import { Card, Image, Accordion } from 'semantic-ui-react';
+import { Card, Image, Accordion, Icon, List } from 'semantic-ui-react';
 
 @autobind
 class Season extends Component {
@@ -29,15 +29,11 @@ class Season extends Component {
 		var episodes = this.props.episodes;
 
 		if(episodes){
-			console.log(episodes)
-			console.log("episodes found");
 			return episodes.map((episode) => {
 				return (
-					<div>
 					<Episode 
 					key={episode._id} 
 					episode={episode} />
-					</div>
 					);
 			});
 		}
@@ -45,12 +41,30 @@ class Season extends Component {
 
 	render(){
 		return(
-			<div>
-			<h3>Season {this.props.season}</h3>
+			<Accordion exclusive={false} fluid>
+
+			<Accordion.Title>
+		      <Icon name='dropdown' />
+		      Season {this.props.season}
+		    </Accordion.Title>
+
+		    <Accordion.Content>
+		    <List divided relaxed>
 			{this.renderEpisodes()}
-			</div>
+			</List>
+			</Accordion.Content>
+
+			</Accordion>
 			);
 
+	}
+
+	componentDidMount(){
+		this.initAccordions();
+	}
+
+	initAccordions(){
+		$('.ui.accordion').accordion();
 	}
 }
 
@@ -65,10 +79,7 @@ export default createContainer((props) => {
 	const season = props.season;
 	const showId = props.showId;
 
-	console.log("In createContainer: " + season + " " + showId);
-
 	return {
 		episodes: Episodes.find({ $and: [{showId: { $eq: showId } }, {season: { $eq:  season }}] }).fetch(),
-		/*episodes: Episodes.find({ $and: [ {_id: { $eq: showId } }, {season: { $eq: season }}] }).fetch(),*/
 	};
 }, Season)	

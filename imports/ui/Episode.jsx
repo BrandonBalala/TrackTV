@@ -5,23 +5,25 @@ import classnames from 'classnames';
 import { Link } from 'react-router';
 import autobind from 'autobind-decorator';
 
+import { List, Divider } from 'semantic-ui-react';
+
 // Show component - represents a single show
 @autobind
 export default class Episode extends Component {
   constructor(props) {
     super(props);
-
-    console.log("in constructor");
   }
   
   render() {
-    console.log("in render");
     return (
-      <li>
-      <span id={this.props.episode._id} className="text">
-      S{this.props.episode.season}E{this.props.episode.number}: {this.props.episode.name}
-      </span>
-      </li>
+
+      <List.Item id={this.props.episode._id}>
+      <List.Content>
+      <List.Header> S{this.props.episode.season}E{this.props.episode.number}: {this.props.episode.name}</List.Header>
+      {this.props.episode.airDate}
+      </List.Content>
+      </List.Item>
+
       );
   }
 }
