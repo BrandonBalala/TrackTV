@@ -3,18 +3,21 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 import autobind from 'autobind-decorator';
-import smoothScroll from 'smoothscroll';
-
+/*import smoothScroll from 'smoothscroll';*/
 
 import { Shows } from '../api/shows.js';
 import { Episodes } from '../api/episodes.js';
 
-import Episode from './Episode.jsx';
+import Season from './Season.jsx';
+
+import { Divider, Icon, Header } from 'semantic-ui-react';
 
 @autobind
 class ShowEpisodes extends Component{
 	constructor(props) {
 		super(props);
+
+		this.state = {seasons: []};
 	}
 
 	renderImdbLink(){
@@ -23,35 +26,49 @@ class ShowEpisodes extends Component{
 		if(imdbId){
 			var imdbURL = 'http://www.imdb.com/title/' + imdbId;
 			return(
-				<a href={imdbURL}><img src='/imdb-icon.png' height="35" /></a>
-			);
+				<a href={imdbURL}><Icon name='imdb' size='huge'/></a>
+				);
 		}
 	}
 
-	renderEpisodes(){
-		var episodeSection = document.querySelector('.showEp');
-		smoothScroll(episodeSection);
+		renderSeasons(){
+			return this.state.seasons.map(
+				(season) => 
+				{
+					var showId = this.props.showId;
 
-		if(this.props.episodeCount){
-			return this.props.episodes.map((episode) => {
-				return (
-					<Episode 
-					key={episode._id} 
-					episode={episode} 
-					/>
-					);
-			});
-		}
-		else{
-			return (
-				<p>No episodes found :(</p>
+					return(
+						//acordion
+						<Season
+						key={season}
+						season={season}
+						showId={showId}
+						/>
+						);
+				}
 				);
-			}
+		}
+
+		componentDidMount(){
+			var showId = this.props.showId;
+			this.getSeasonList(showId);
+		}
+
+		componentWillUpdate(nextProps, nextState){
+			this.getSeasonList(nextProps.showId);
+		}
+
+		getSeasonList(showId){
+			/*var showId = this.props.showId;*/
+			Meteor.call('episodes.getUniqueField', "season", showId, (error, result) => {
+				console.log("SEASONS: " + result);
+				this.setState({seasons: result});
+			});
 		}
 
 		render(){
 			return(
-				<div className="container">
+				<div>
 				<div>
 				<h1>{this.props.show.name}</h1>
 				<br/>
@@ -61,19 +78,24 @@ class ShowEpisodes extends Component{
 				{this.renderImdbLink()}
 				</div>
 
-				<ul>
-				{this.renderEpisodes()}
-				</ul>
+				<div>
+				{this.renderSeasons()}
 				</div>
-				);
+
+{/*				<ul>
+				{this.renderEpisodes()}
+			</ul>*/}
+
+			</div>
+			);
 		}
 	}
 
 	ShowEpisodes.propTypes = {
 		showId: PropTypes.string.isRequired,
 		show: PropTypes.object.isRequired,
-		episodeCount: PropTypes.number.isRequired,
-		episodes: PropTypes.array.isRequired,
+		/*episodeCount: PropTypes.number.isRequired,
+		episodes: PropTypes.array.isRequired,*/
 	};
 
 	export default createContainer((props) => {
@@ -83,8 +105,8 @@ class ShowEpisodes extends Component{
 
 		return {
 			show: Shows.findOne({_id: { $eq: showId } }),
-			episodeCount: Episodes.find({showId: { $eq: showId } }).count(),
-			episodes: Episodes.find({showId: { $eq: showId } }).fetch(),
-		};
-	}, ShowEpisodes)
+						/*episodeCount: Episodes.find({showId: { $eq: showId } }).count(),
+						episodes: Episodes.find({showId: { $eq: showId } }).fetch(),*/
+					};
+				}, ShowEpisodes)
 

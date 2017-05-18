@@ -13,6 +13,7 @@ import ShowEpisodes from './ShowEpisodes.jsx';
 /*import AccountsUIWrapper from './AccountsUIWrapper.jsx';*/
 
 import smoothScroll from 'smoothscroll';
+import { Card, Segment, Divider } from 'semantic-ui-react';
 
 @autobind
 class App extends Component{
@@ -25,11 +26,11 @@ class App extends Component{
     };
 
 /*    this.renderEpisodesSection = this.renderEpisodesSection.bind(this);
-    this.modifyActiveShow = this.modifyActiveShow.bind(this);*/
-  }
+this.modifyActiveShow = this.modifyActiveShow.bind(this);*/
+}
 
-  handleSubmit(event){
-    event.preventDefault();
+handleSubmit(event){
+  event.preventDefault();
 
 	    // Find the text field via the React ref
 	    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
@@ -56,60 +57,62 @@ class App extends Component{
     var activeShow = this.state.activeShow;
 
     if(activeShow) {
-        /*location.href = "#showEp";*/
+      /*var seasons = Meteor.call('episodes.getUniqueField', "season", activeShow);*/
+      var episodeSection = document.querySelector('.showEp');
+      smoothScroll(episodeSection);
 
-        var episodeSection = document.querySelector('.showEp');
-        console.log(episodeSection);
-        smoothScroll(episodeSection);
 
-        return (
-          <ShowEpisodes 
-          key={activeShow} 
-          showId={activeShow}
-          />
-          );
-      }
-    }
-
-    modifyActiveShow(event){
-      this.setState({ activeShow: event.target.id });
-    }
-
-    render() {
       return (
-       <div className="container">
-       <header>
-       <h1>Track TV</h1>
-       <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
-       <input
-       type="text"
-       ref="textInput"
-       placeholder="Search for a show"
-       />		
-       </form>
-       </header>
-
-       <ul>
-       {this.renderShows()}
-       </ul>
-
-       <div className="showEp">
-       {this.renderEpisodesSection()} 
-       </div>
-       </div>
-       );
+        <Segment>
+        <ShowEpisodes 
+        showId={activeShow}
+        />
+        </Segment>
+        );
     }
   }
 
-  App.propTypes = {
-    shows: PropTypes.array.isRequired,
-    activeShow: PropTypes.number
+  modifyActiveShow(event){
+    this.setState({ activeShow: event.target.id });
+  }
+
+  render() {
+    return (
+     <div className="container">
+     <header>
+     <h1>Track TV</h1>
+     <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+     <input
+     type="text"
+     ref="textInput"
+     placeholder="Search for a show"
+     />		
+     </form>
+     </header>
+
+     <Card.Group itemsPerRow={4}>
+     {this.renderShows()}
+     </Card.Group>
+
+     <Divider />
+
+     <div className="showEp">
+     {this.renderEpisodesSection()} 
+     </div>
+     </div>
+     );
+  }
+}
+
+App.propTypes = {
+  shows: PropTypes.array.isRequired,
+  activeShow: PropTypes.number
+};
+
+export default createContainer(() => {
+  Meteor.subscribe('shows');
+
+  return {
+    shows: Shows.find({}, { sort: { createdAt: -1 } }).fetch(),
   };
-
-  export default createContainer(() => {
-    Meteor.subscribe('shows');
-
-    return {
-      shows: Shows.find({}, { sort: { createdAt: -1 } }).fetch(),
-    };
-  }, App);
+}, App);

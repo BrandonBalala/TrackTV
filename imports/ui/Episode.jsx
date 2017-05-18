@@ -10,9 +10,12 @@ import autobind from 'autobind-decorator';
 export default class Episode extends Component {
   constructor(props) {
     super(props);
+
+    console.log("in constructor");
   }
   
   render() {
+    console.log("in render");
     return (
       <li>
       <span id={this.props.episode._id} className="text">

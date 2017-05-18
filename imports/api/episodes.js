@@ -7,9 +7,9 @@ export const Episodes = new Mongo.Collection('episodes');
 
 if (Meteor.isServer) {
 	// This code only runs on the server
-  	Meteor.publish('episodes', function tasksPublication() {
-   		return Episodes.find();
-  	});
+	Meteor.publish('episodes', function tasksPublication() {
+		return Episodes.find();
+	});
 
 	Episodes._ensureIndex( { showId: 1, episodeIndex: 1 }, { unique: true } );
 }
@@ -31,23 +31,23 @@ Meteor.methods({
 		check(summary, String);*/
 
 		var episodeId = Episodes.insert({
-	      showId: showId,
-	      episodeIndex: episodeIndex,
-	      name: name,
-	      season: season,
-	      number: number,
-	      airDate: airDate,
-	      airTime: airTime,
-	      runtime: runtime,
-	      imageSmallURL: imageSmallURL,
-	      imageURL: imageURL,
-	      summary: summary,
-	      createdAt: new Date()
-    	});
+			showId: showId,
+			episodeIndex: episodeIndex,
+			name: name,
+			season: season,
+			number: number,
+			airDate: airDate,
+			airTime: airTime,
+			runtime: runtime,
+			imageSmallURL: imageSmallURL,
+			imageURL: imageURL,
+			summary: summary,
+			createdAt: new Date()
+		});
 
-    	/*console.log('finished inserting episode');*/
+		/*console.log('finished inserting episode');*/
 
-    	return episodeId;
+		return episodeId;
 	},
 
 	'episodes.search'(showId, apiId){
@@ -57,41 +57,57 @@ Meteor.methods({
 		check(apiId, Number)
 
 		var url = "http://api.tvmaze.com/shows/" + apiId + "/episodes";
-			try {
-				const results = HTTP.call('GET', url);
-				
-				var resultsJSON = JSON.parse(results.content);
+		try {
+			const results = HTTP.call('GET', url);
 
-				var episodeId, episode, episodeIndex, name, season, number, airDate, airTime, runtime, imageSmallURL, imageURL, summary;
-				for (var i = 0; i < resultsJSON.length; i++) {
-					try{
-						episode = resultsJSON[i];
-						episodeIndex = episode.id;
-						name = episode.name;
-						season = episode.season;
-						number = episode.number;
-						airDate = episode.airdate;
-						airTime = episode.airtime;
-						runtime = episode.runtime;
-						if(episode.image){
-							imageSmallURL = episode.image.medium;
-							imageURL = episode.image.original;
-						}
-						summary = episode.summary;
+			var resultsJSON = JSON.parse(results.content);
 
-						console.log("= S" + season + "E" + number + ": " + name);
-
-						episodeId = Meteor.call('episodes.insert', showId, episodeIndex, name, season, number, airDate, airTime, runtime, imageSmallURL, imageURL, summary);
-					} catch(e) {
-						console.log(e);
+			var episodeId, episode, episodeIndex, name, season, number, airDate, airTime, runtime, imageSmallURL, imageURL, summary;
+			for (var i = 0; i < resultsJSON.length; i++) {
+				try{
+					episode = resultsJSON[i];
+					episodeIndex = episode.id;
+					name = episode.name;
+					season = episode.season;
+					number = episode.number;
+					airDate = episode.airdate;
+					airTime = episode.airtime;
+					runtime = episode.runtime;
+					if(episode.image){
+						imageSmallURL = episode.image.medium;
+						imageURL = episode.image.original;
 					}
-				}
+					summary = episode.summary;
 
-				return true;
-			} catch (e) {
+					console.log("= S" + season + "E" + number + ": " + name);
+
+					episodeId = Meteor.call('episodes.insert', showId, episodeIndex, name, season, number, airDate, airTime, runtime, imageSmallURL, imageURL, summary);
+				} catch(e) {
+					console.log(e);
+				}
+			}
+
+			return true;
+		} catch (e) {
 			      // Got a network error, timeout, or HTTP error in the 400 or 500 range.
 			      console.log(e);
 			      return false;
-			}
+			  }
+	},
+
+	'episodes.getUniqueField'(field, showId){
+		try{
+			var results = _.uniq(Episodes.find({showId: { $eq: showId } }, {
+			    sort: {[field]: 1}, fields: {[field]: 1}
+			  }).fetch().map(x => x[field]), true);
+
+			/*for (var i = results.length - 1; i >= 0; i--) {
+				console.log(results[i]);
+			}*/
+
+			return results;
+		} catch (e){
+			console.log(e);
 		}
+	}
 });
