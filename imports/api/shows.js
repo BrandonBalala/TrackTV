@@ -132,15 +132,12 @@ Meteor.methods({
 			  }
 			},
 
-	'shows.getUniqueField'(field, showId){
+	'shows.getShowApiId'(showId){
 		try{
-			var results = _.uniq(Shows.find({_id: { $eq: showId } }, {
-			    sort: {[field]: 1}, fields: {[field]: 1}
-			  }).fetch().map(x => x[field]), true);
-
-				console.log(results);
-
-			return results;
+			var result = Shows.findOne({_id: { $eq: showId } }, {});
+			console.log(result['apiId']);
+			
+			return result['apiId'];
 		} catch (e){
 			console.log(e);
 		}

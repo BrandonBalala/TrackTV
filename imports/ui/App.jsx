@@ -50,26 +50,21 @@ handleSubmit(event){
    });
   }
 
-  renderEpisodesSection(){
-    var activeShow = this.state.activeShow;
+  modifyActiveShow(event){
+    var activeShow = event.target.id;
 
-    if(activeShow) {
-      var episodeSection = document.querySelector('.showEp');
-      smoothScroll(episodeSection);
-
-
-      return (
+    ReactDOM.render(
         <Segment>
         <ShowEpisodes 
         showId={activeShow}
         />
         </Segment>
-        );
-    }
-  }
+      ,
+      document.getElementById('activeShowSection')
+    );
 
-  modifyActiveShow(event){
-    this.setState({ activeShow: event.target.id });
+    var episodeSection = document.querySelector('.showEp');
+    smoothScroll(episodeSection);
   }
 
   render() {
@@ -94,7 +89,8 @@ handleSubmit(event){
      <Divider />
 
      <div className="showEp">
-     {this.renderEpisodesSection()} 
+
+     <div id="activeShowSection"></div> 
      </div>
      </div>
      );
