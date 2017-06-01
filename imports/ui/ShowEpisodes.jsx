@@ -51,19 +51,33 @@ class ShowEpisodes extends Component{
 
 	componentDidMount(){
 		var showId = this.props.showId;
+		/*this.updateListOfEpisodes(showId);*/
 		this.getSeasonList(showId);
-
-
+		this.getApiId(showId);
 	}
 
 	componentWillUpdate(nextProps, nextState){
-		this.getSeasonList(nextProps.showId);
+		var showId = nextProps.showId;
+		/*this.updateListOfEpisodes(showId);*/
+		this.getSeasonList(showId);
+		this.getApiId(showId);
 	}
 
 	getSeasonList(showId){
 		Meteor.call('episodes.getUniqueField', "season", showId, (error, result) => {
 			this.setState({seasons: result});
 		});
+	}
+
+	getApiId(showId){
+		Meteor.call('shows.getUniqueField', "apiId", showId, (error, result) => {
+			this.setState({apiId: result});
+			console.log(result);
+		});
+	}
+
+	updateListOfEpisodes(showId){
+		Meteor.call('episode.update', showId);
 	}
 
 	render(){

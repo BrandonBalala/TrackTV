@@ -55,8 +55,6 @@ Meteor.methods({
 		Tasks.remove(showId);
 	},
 
-
-
 	'shows.remove'(showId) {
 		check(showId, String);
 
@@ -69,8 +67,6 @@ Meteor.methods({
 		}
 
 	},
-
-
 
 	'shows.search'(name){
 		/*console.log('in shows.search');*/
@@ -134,5 +130,19 @@ Meteor.methods({
 			      console.log(e);
 			      return false;
 			  }
-			}
+			},
+
+	'shows.getUniqueField'(field, showId){
+		try{
+			var results = _.uniq(Shows.find({_id: { $eq: showId } }, {
+			    sort: {[field]: 1}, fields: {[field]: 1}
+			  }).fetch().map(x => x[field]), true);
+
+				console.log(results);
+
+			return results;
+		} catch (e){
+			console.log(e);
+		}
+	},
 		});

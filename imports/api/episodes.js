@@ -109,5 +109,13 @@ Meteor.methods({
 		} catch (e){
 			console.log(e);
 		}
-	}
+	},
+
+	'episode.update'(showId){
+		try{
+
+		} catch (e){
+			console.log(e);
+		}
+	},
 });
