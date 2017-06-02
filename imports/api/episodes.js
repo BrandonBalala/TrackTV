@@ -101,10 +101,6 @@ Meteor.methods({
 			    sort: {[field]: 1}, fields: {[field]: 1}
 			  }).fetch().map(x => x[field]), true);
 
-			/*for (var i = results.length - 1; i >= 0; i--) {
-				console.log(results[i]);
-			}*/
-
 			return results;
 		} catch (e){
 			console.log(e);

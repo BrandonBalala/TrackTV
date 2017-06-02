@@ -1,5 +1,6 @@
 import '../../api/shows.js';
 import '../../api/episodes.js';
+import '../../api/trackedshows.js';
 
 /*import { Meteor } from 'meteor/meteor';
 

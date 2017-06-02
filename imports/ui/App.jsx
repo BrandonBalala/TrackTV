@@ -54,7 +54,7 @@ handleSubmit(event){
     var activeShow = event.target.id;
 
     ReactDOM.render(
-        <Segment>
+        <Segment piled raised>
         <ShowEpisodes 
         showId={activeShow}
         />
@@ -101,7 +101,8 @@ handleSubmit(event){
 
 App.propTypes = {
   shows: PropTypes.array.isRequired,
-  activeShow: PropTypes.number
+  activeShow: PropTypes.number,
+  currentUser: PropTypes.object,
 };
 
 export default createContainer(() => {
@@ -109,5 +110,6 @@ export default createContainer(() => {
 
   return {
     shows: Shows.find({}, { sort: { createdAt: -1 } }).fetch(),
+    currentUser: Meteor.user(),
   };
 }, App);

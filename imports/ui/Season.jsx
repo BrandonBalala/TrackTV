@@ -73,6 +73,7 @@ Season.propTypes = {
 	season: PropTypes.number.isRequired,
 	showId: PropTypes.string.isRequired,
 	episodes: PropTypes.array.isRequired,
+	currentUser: PropTypes.object,
 };
 
 export default createContainer((props) => {
@@ -81,5 +82,6 @@ export default createContainer((props) => {
 
 	return {
 		episodes: Episodes.find({ $and: [{showId: { $eq: showId } }, {season: { $eq:  season }}] }).fetch(),
+		currentUser: Meteor.user(),
 	};
 }, Season)	

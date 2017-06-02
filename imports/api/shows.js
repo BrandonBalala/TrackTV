@@ -50,20 +50,23 @@ Meteor.methods({
 	'shows.remove'(showId) {
 		check(showId, String);
 
-		Tasks.remove(showId);
-	},
-
-	'shows.remove'(showId) {
-		check(showId, String);
-
-		try {
-			const result = Shows.findOne({_id: { $eq: activeShow } }).fetch();
-
-			console.log(result);
-		} catch(e) {
+		try{
+			Shows.remove(showId);
+		} catch(e){
 			console.log(e);
 		}
+	},
 
+	'shows.find'(showId) {
+		check(showId, String);
+
+		try{
+			var show = Shows.findOne({_id: { $eq: showId } });
+
+			return show;
+		} catch(e){
+			console.log(e);
+		}
 	},
 
 	'shows.search'(name){
