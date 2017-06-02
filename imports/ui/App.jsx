@@ -9,8 +9,8 @@ import { Episodes } from '../api/episodes.js';
 
 import Show from './Show.jsx';
 import ShowEpisodes from './ShowEpisodes.jsx';
-import { CustomSidebar } from './Sidebar.jsx';
-/*import AccountsUIWrapper from './AccountsUIWrapper.jsx';*/
+/*import { CustomSidebar } from './Sidebar.jsx';*/
+import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 
 import smoothScroll from 'smoothscroll';
 import { Card, Segment, Divider } from 'semantic-ui-react';
@@ -80,6 +80,8 @@ handleSubmit(event){
      placeholder="Search for a show"
      />		
      </form>
+
+     <AccountsUIWrapper />
      </header>
 
      <Card.Group itemsPerRow={4}>

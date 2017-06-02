@@ -4,8 +4,6 @@ import { check } from 'meteor/check';
 import { HTTP } from 'meteor/http';
 
 export const Shows = new Mongo.Collection('shows');
-/*export const ShowGenres = new Mongo.Collection('showGenres');
-export const ShowDays = new Mongo.Collection('showDays');*/
 
 if (Meteor.isServer) {
 	// This code only runs on the server
