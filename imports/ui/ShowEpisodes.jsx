@@ -11,7 +11,7 @@ import { TrackedShows } from '../api/trackedshows.js';
 
 import Season from './Season.jsx';
 
-import { Divider, Icon, Header, Grid, Segment, Image, Label, Button } from 'semantic-ui-react';
+import { Divider, Icon, Header, Grid, Segment, Image, Label, Button, Dimmer, Loader } from 'semantic-ui-react';
 
 @autobind
 class ShowEpisodes extends Component{
@@ -21,51 +21,111 @@ class ShowEpisodes extends Component{
 		this.state = {seasons: []};
 	}
 
+	/*activateLoader(){
+		ReactDOM.render(
+			<Dimmer disabled inverted>
+        		<Loader inverted content='Loading' />
+  			</Dimmer>
+	      	,
+	      	document.getElementById('loaderShowEpisodeSection')
+	    );
+	}
+
+	disableLoader(){
+		ReactDOM.render(
+			<div></div>
+	      	,
+	      	document.getElementById('loaderShowEpisodeSection')
+	    );
+	}*/
+
+
 	trackShow(event){
 	    var showId = this.props.showId;
 	    var userId = this.props.currentUser._id;
 
-		var feedback = Meteor.call('trackedShows.insert',userId, showId);
-
-	    ReactDOM.render(
-	    	<div>
-		        <Button size='tiny' color='blue'>Watch Later</Button>
-				<Button size='tiny' color='yellow'>Put on Hold</Button>
-				<Button size='tiny' color='red' onClick={this.removeShow.bind(this)}>Remove Show</Button>
-    		</div>
-	      ,
-	      document.getElementById('showStatusButton')
-	    );
+		var feedback = Meteor.call('trackedShows.insert',userId, showId, (error, result) => {
+			if(result){
+				console.log('result: ' + result);
+				this.renderShowStatusButton("watching");
+			}
+		});
 	}
 
 	removeShow(event){
 	    var showId = this.props.showId;
 	    var userId = this.props.currentUser._id;
 
-		var feedback = Meteor.call('trackedShows.remove',userId, showId);
-
-	    ReactDOM.render(
-	    	<div>
-		        <Button size='tiny' color='green' onClick={this.trackShow.bind(this)}>Track Show</Button>
-    		</div>
-	      ,
-	      document.getElementById('showStatusButton')
-	    );
+		var feedback = Meteor.call('trackedShows.remove',userId, showId,(error, result) => {
+			if(result){
+				console.log('result: ' + result);
+				this.renderShowStatusButton();
+			}
+		});
 	}
 
-	renderShowStatusButton(){
+	renderTrackShowBtn(){
+		return (
+			<Button size='tiny' color='green' onClick={this.trackShow.bind(this)}>Track Show</Button>
+		);
+	}
 
-	    var trackedShows = this.props.trackedShows;
+	renderWatchLaterBtn(status){
+		if(status != 'planToWatch'){
+			return (
+				<Button size='tiny' color='blue'>Watch Later</Button>
+			);
+		}
+	}
+
+	renderPutOnHoldBtn(status){
+		if(status != 'onHold'){
+			return (
+				<Button size='tiny' color='yellow'>Put on Hold</Button>
+			);
+		}
+	}
+
+	renderDroppedBtn(status){
+		if(status != 'dropped'){
+			return (
+				<Button size='tiny' color='red' onClick={this.removeShow.bind(this)}>Remove Show</Button>
+			);
+		}
+	}
+
+	renderShowStatusButton(status){
+		console.log('renderShowStatusButton STATUS: ' + status);
+
+	    /*var trackedShows = this.props.trackedShows;*/
 	    var isLoggedIn = Meteor.userId();
 
 		ReactDOM.render(
-			<div>
-			{ isLoggedIn ? (
-				<Button size='tiny' color='green' onClick={this.trackShow.bind(this)}>Track Show</Button>
-			) : (
-				<Button size='tiny' color='green' disabled='true'>Track Show, Login First</Button>
-			)}
-			</div>
+			<Segment compact='true'>
+				{ !isLoggedIn ? (
+					<Button size='tiny' color='green' disabled='true'>Track Show, Login First</Button>
+				) : (
+					''
+				)}
+
+				{ (status && isLoggedIn) ? (
+					<div>
+						{ this.renderWatchLaterBtn(status) }
+						{ this.renderPutOnHoldBtn(status) }
+						{ this.renderDroppedBtn(status) }
+					</div>
+				) : (
+					''
+				)}
+
+				{ (!status && isLoggedIn) ? (
+					<div>
+						{ this.renderTrackShowBtn() }
+					</div>
+				) : (
+					''
+				)}
+			</Segment>
 	      	,
 	      	document.getElementById('showStatusButton')
 	    );
@@ -112,22 +172,38 @@ class ShowEpisodes extends Component{
 	}
 
 	componentDidMount(){
+		/*this.activateLoader();*/
+
 		var showId = this.props.showId;
 		var apiId = this.props.show['apiId'];
+
+		if(this.props.trackedShows)
+			this.renderShowStatusButton(this.props.trackedShows.status);
+		else
+			this.renderShowStatusButton();
+
 		this.updateListOfEpisodes(showId, apiId);
 		this.getSeasonList(showId);
-		this.renderShowStatusButton();
+
+		/*this.disableLoader();*/
 	}
 
 	
 	componentWillReceiveProps(nextProps){
-		console.log('update');
+		/*this.activateLoader();*/
+
 		var showId = nextProps.showId;
 		var apiId = nextProps.show['apiId'];
 
+		if(nextProps.trackedShows)
+			this.renderShowStatusButton(nextProps.trackedShows.status);
+		else
+			this.renderShowStatusButton();
+
 		this.updateListOfEpisodes(showId, apiId);
 		this.getSeasonList(showId);
-		this.renderShowStatusButton();
+
+		/*this.disableLoader();*/
 	}
 
 	getSeasonList(showId){
@@ -143,29 +219,28 @@ class ShowEpisodes extends Component{
 	render(){
 		return(
 			<div>
-
-				<Grid>
-				    <Grid.Column width={4}>
-				      <Image src={this.props.show.imageSmallURL} shape='rounded' centered />
-				    </Grid.Column>
-				    <Grid.Column width={9}>
-				      	<h1>{this.props.show.name}</h1>
-			          	<div dangerouslySetInnerHTML={{ __html: this.props.show.summary }} />
-			          	<br/>
-			          	<div id='showStatusButton'></div>
-				    </Grid.Column>
-				    <Grid.Column width={3}>
-				    	<Label.Group tag>
-				    		{this.renderGenre()}
-				    	</Label.Group>
-				    	<br/>
-  			          	{this.renderImdbLink()}
-				    </Grid.Column>
-			  	</Grid>
-		  	<br/>
-			<div>
-			{this.renderSeasons()}
-			</div>
+					<Grid>
+					    <Grid.Column width={4}>
+					      <Image src={this.props.show.imageSmallURL} shape='rounded' bordered='true' centered />
+					    </Grid.Column>
+					    <Grid.Column width={9}>
+					      	<h1>{this.props.show.name}</h1>
+				          	<div dangerouslySetInnerHTML={{ __html: this.props.show.summary }} />
+				          	<br/>
+				          	<div id='showStatusButton'></div>
+					    </Grid.Column>
+					    <Grid.Column width={3}>
+					    	<Label.Group tag>
+					    		{this.renderGenre()}
+					    	</Label.Group>
+					    	<br/>
+	  			          	{this.renderImdbLink()}
+					    </Grid.Column>
+				  	</Grid>
+				  	<br/>
+					<div>
+					{this.renderSeasons()}
+					</div>
 			</div>
 		);
 	}

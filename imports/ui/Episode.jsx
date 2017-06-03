@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import classnames from 'classnames';
 import { Link } from 'react-router';
+import { createContainer } from 'meteor/react-meteor-data';
 import autobind from 'autobind-decorator';
 
-import { List, Divider } from 'semantic-ui-react';
+import { List, Divider, Checkbox } from 'semantic-ui-react';
 
 // Show component - represents a single show
 @autobind
-export default class Episode extends Component {
+class Episode extends Component{
   constructor(props) {
     super(props);
   }
@@ -18,10 +19,15 @@ export default class Episode extends Component {
     return (
 
       <List.Item id={this.props.episode._id}>
-      <List.Content>
-      <List.Header> S{this.props.episode.season}E{this.props.episode.number}: {this.props.episode.name}</List.Header>
-      {this.props.episode.airDate}
-      </List.Content>
+        <List.Content verticalAlign='top' floated='right'>
+          <List.Header>Seen?</List.Header>
+          <Checkbox slider />
+        </List.Content>
+
+        <List.Content verticalAlign='top' floated='left'>
+          <List.Header> S{this.props.episode.season}E{this.props.episode.number}: {this.props.episode.name}</List.Header>
+          {this.props.episode.airDate}
+        </List.Content>
       </List.Item>
 
       );
@@ -31,3 +37,7 @@ export default class Episode extends Component {
 Episode.propTypes = {
   episode: PropTypes.object.isRequired,
 };
+
+export default createContainer((props) => {
+  return {};
+}, Episode)

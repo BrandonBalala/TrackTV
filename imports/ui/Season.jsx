@@ -49,7 +49,7 @@ class Season extends Component {
 		    </Accordion.Title>
 
 		    <Accordion.Content>
-		    <List divided relaxed>
+		    <List animated divided relaxed verticalAlign='middle'>
 			{this.renderEpisodes()}
 			</List>
 			</Accordion.Content>

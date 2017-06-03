@@ -28,9 +28,10 @@ Meteor.methods({
 				createdAt: new Date()
 			});
 
-			return trackedShowId;
+			return true;
 		} catch (e){
 			console.log(e);
+			return false;
 		}
 	},
 
@@ -40,8 +41,12 @@ Meteor.methods({
 
 		try{
 			TrackedShows.remove({$and: [{userId: { $eq: userId } }, {showId: { $eq: showId }}]});
+
+			return true;
 		} catch (e){
 			console.log(e);
+
+			return false;
 		}
 	},
 
