@@ -13,7 +13,7 @@ if (Meteor.isServer) {
 		return TrackedShows.find();
 	});
 
-	TrackedShows._ensureIndex( { showId: 1 }, { unique: true } );
+	TrackedShows._ensureIndex( { showId: 1, userId: 1 }, { unique: true } );
 }
 
 Meteor.methods({
@@ -34,11 +34,12 @@ Meteor.methods({
 		}
 	},
 
-	'trackedShows.remove'(trackedShowId){
-		check(trackedShowId, String);
+	'trackedShows.remove'(userId, showId){
+		check(userId, String);
+		check(showId, String);
 
 		try{
-			TrackedShows.remove(trackedShowId);
+			TrackedShows.remove({$and: [{userId: { $eq: userId } }, {showId: { $eq: showId }}]});
 		} catch (e){
 			console.log(e);
 		}
@@ -72,7 +73,7 @@ Meteor.methods({
 		try{
 			var shows = [];
 
-			var temp = TrackedShows.find($and: [{userId: { $eq: userId } }, {status: { $eq: status }}]).fetch();
+			var temp = TrackedShows.find({$and: [{userId: { $eq: userId } }, {status: { $eq: status }}]}).fetch();
 
 			for (var i = 0; i <  temp.length; i++) {
 				var showId = temp[i]['showId'];
@@ -94,7 +95,7 @@ Meteor.methods({
 		try{
 			var shows = [];
 
-			var temp = TrackedShows.find($and: [{userId: { $eq: userId } }, {status: { $eq: status }}]).fetch();
+			var temp = TrackedShows.find({$and: [{userId: { $eq: userId } }, {status: { $eq: status }}]}).fetch();
 
 			for (var i = 0; i <  temp.length; i++) {
 				var showId = temp[i]['showId'];
@@ -116,7 +117,7 @@ Meteor.methods({
 		try{
 			var shows = [];
 
-			var temp = TrackedShows.find($and: [{userId: { $eq: userId } }, {status: { $eq: status }}]).fetch();
+			var temp = TrackedShows.find({$and: [{userId: { $eq: userId } }, {status: { $eq: status }}]}).fetch();
 
 			for (var i = 0; i <  temp.length; i++) {
 				var showId = temp[i]['showId'];
@@ -138,7 +139,7 @@ Meteor.methods({
 		try{
 			var shows = [];
 
-			var temp = TrackedShows.find($and: [{userId: { $eq: userId } }, {status: { $eq: status }}]).fetch();
+			var temp = TrackedShows.find({$and: [{userId: { $eq: userId } }, {status: { $eq: status }}]}).fetch();
 
 			for (var i = 0; i <  temp.length; i++) {
 				var showId = temp[i]['showId'];
@@ -160,7 +161,7 @@ Meteor.methods({
 		try{
 			var shows = [];
 
-			var temp = TrackedShows.find($and: [{userId: { $eq: userId } }, {status: { $eq: status }}]).fetch();
+			var temp = TrackedShows.find({$and: [{userId: { $eq: userId } }, {status: { $eq: status }}]}).fetch();
 
 			for (var i = 0; i <  temp.length; i++) {
 				var showId = temp[i]['showId'];

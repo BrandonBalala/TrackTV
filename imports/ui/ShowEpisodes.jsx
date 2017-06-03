@@ -7,6 +7,7 @@ import autobind from 'autobind-decorator';
 
 import { Shows } from '../api/shows.js';
 import { Episodes } from '../api/episodes.js';
+import { TrackedShows } from '../api/trackedshows.js';
 
 import Season from './Season.jsx';
 
@@ -20,15 +21,54 @@ class ShowEpisodes extends Component{
 		this.state = {seasons: []};
 	}
 
+	trackShow(event){
+	    var showId = this.props.showId;
+	    var userId = this.props.currentUser._id;
+
+		var feedback = Meteor.call('trackedShows.insert',userId, showId);
+
+	    ReactDOM.render(
+	    	<div>
+		        <Button size='tiny' color='blue'>Watch Later</Button>
+				<Button size='tiny' color='yellow'>Put on Hold</Button>
+				<Button size='tiny' color='red' onClick={this.removeShow.bind(this)}>Remove Show</Button>
+    		</div>
+	      ,
+	      document.getElementById('showStatusButton')
+	    );
+	}
+
+	removeShow(event){
+	    var showId = this.props.showId;
+	    var userId = this.props.currentUser._id;
+
+		var feedback = Meteor.call('trackedShows.remove',userId, showId);
+
+	    ReactDOM.render(
+	    	<div>
+		        <Button size='tiny' color='green' onClick={this.trackShow.bind(this)}>Track Show</Button>
+    		</div>
+	      ,
+	      document.getElementById('showStatusButton')
+	    );
+	}
+
 	renderShowStatusButton(){
-		return(
-			<div id='showStatusButton'>
-	    		<Button size='tiny' color='green'>Track Show</Button>
-	    		<Button size='tiny' color='blue'>Watch Later</Button>
-	    		<Button size='tiny' color='yellow'>Put on Hold</Button>
-	    		<Button size='tiny' color='red'>Remove</Button>
-	    	</div>
-		);
+
+	    var trackedShows = this.props.trackedShows;
+	    var isLoggedIn = Meteor.userId();
+
+		ReactDOM.render(
+			<div>
+			{ isLoggedIn ? (
+				<Button size='tiny' color='green' onClick={this.trackShow.bind(this)}>Track Show</Button>
+			) : (
+				<Button size='tiny' color='green' disabled='true'>Track Show, Login First</Button>
+			)}
+			</div>
+	      	,
+	      	document.getElementById('showStatusButton')
+	    );
 	}
 
 	renderGenre(){
@@ -76,6 +116,7 @@ class ShowEpisodes extends Component{
 		var apiId = this.props.show['apiId'];
 		this.updateListOfEpisodes(showId, apiId);
 		this.getSeasonList(showId);
+		this.renderShowStatusButton();
 	}
 
 	
@@ -86,6 +127,7 @@ class ShowEpisodes extends Component{
 
 		this.updateListOfEpisodes(showId, apiId);
 		this.getSeasonList(showId);
+		this.renderShowStatusButton();
 	}
 
 	getSeasonList(showId){
@@ -110,7 +152,7 @@ class ShowEpisodes extends Component{
 				      	<h1>{this.props.show.name}</h1>
 			          	<div dangerouslySetInnerHTML={{ __html: this.props.show.summary }} />
 			          	<br/>
-			          	{this.renderShowStatusButton()}
+			          	<div id='showStatusButton'></div>
 				    </Grid.Column>
 				    <Grid.Column width={3}>
 				    	<Label.Group tag>
@@ -133,17 +175,20 @@ ShowEpisodes.propTypes = {
 	showId: PropTypes.string.isRequired,
 	show: PropTypes.object.isRequired,
 	currentUser: PropTypes.object,
+	trackedShows: PropTypes.object,
 };
 
 export default createContainer((props) => {
 	Meteor.subscribe('episodes');
 	Meteor.subscribe('trackedShows');
 
+	const userId = Meteor.userId();
 	const showId = props.showId;
 
 	return {
 		show: Shows.findOne({_id: { $eq: showId } }),
 		currentUser: Meteor.user(),
+		trackedShows: TrackedShows.findOne({$and: [{userId: { $eq: userId } }, {showId: { $eq: showId }}]}),
 	};
 }, ShowEpisodes)
 
