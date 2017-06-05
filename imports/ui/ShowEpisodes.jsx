@@ -21,25 +21,6 @@ class ShowEpisodes extends Component{
 		this.state = {seasons: []};
 	}
 
-	/*activateLoader(){
-		ReactDOM.render(
-			<Dimmer disabled inverted>
-        		<Loader inverted content='Loading' />
-  			</Dimmer>
-	      	,
-	      	document.getElementById('loaderShowEpisodeSection')
-	    );
-	}
-
-	disableLoader(){
-		ReactDOM.render(
-			<div></div>
-	      	,
-	      	document.getElementById('loaderShowEpisodeSection')
-	    );
-	}*/
-
-
 	trackShow(event){
 	    var showId = this.props.showId;
 	    var userId = this.props.currentUser._id;
@@ -197,7 +178,6 @@ class ShowEpisodes extends Component{
 		else
 			this.renderShowStatusButton();
 
-		/*this.updateListOfEpisodes(showId, apiId);*/
 		this.getSeasonList(showId);
 	}
 
@@ -206,11 +186,6 @@ class ShowEpisodes extends Component{
 			this.setState({seasons: result});
 		});
 	}
-
-/*	updateListOfEpisodes(showId, apiId){
-		Meteor.call('shows.update', showId, apiId);
-		Meteor.call('episodes.update', showId, apiId);
-	}*/
 
 	render(){
 		return(

@@ -50,10 +50,6 @@ handleSubmit(event){
    });
   }
 
-/*  updateShowAndEpisodes(showId){
-    Meteor.call('shows.update', showId);
-  }*/
-
   modifyActiveShow(event){
     var activeShow = event.target.id;
 
