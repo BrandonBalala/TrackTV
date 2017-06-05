@@ -47,84 +47,62 @@ Meteor.methods({
 		return showId;
 	},
 
-	'shows.update.action'(showId, apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary) {
-		/*console.log('in shows.insert');*/
-
-		check(apiId, Number);
-		check(name, String);
-
+	'shows.update.action'(showId, apiId, status, runtime, scheduleTime, scheduleDays, network, imageSmallURL, imageURL) {
 		Shows.update(
-		{ _id: showId },
-		{
-			apiId: apiId,
-			name: name,
-			type: type,
-			genres: genres,
-			language: language,
-			status: status,
-			runtime: runtime,
-			premiered: premiered,
-			scheduleTime: scheduleTime,
-			scheduleDays: scheduleDays,
-			network: network,
-			country: country,
-			imdbId: imdbId,
-			imageSmallURL: imageSmallURL,
-			imageURL: imageURL,
-			summary: summary,
-			createdAt: new Date()
+		{$and: [{apiId: { $eq: apiId } }, {showId: { $eq: showId }}]},
+		{ $set:
+			{
+				status: status,
+				runtime: runtime,
+				scheduleTime: scheduleTime,
+				scheduleDays: scheduleDays,
+				network: network,
+				imageSmallURL: imageSmallURL,
+				imageURL: imageURL,
+			}
 		});
-
-		return showId;
 	},
 
 
-	'shows.update'(showId, apiId){
+	'shows.update'(showId){
+		var showFound = Shows.findOne({_id: { $eq: showId } });
+		var apiId = showFound.apiId;
+
 		var url = "http://api.tvmaze.com/shows/" + apiId;
 
 		try{
-			console.log('shows.update - ' + 'showId: ' + showId + ' - apiId: ' + apiId);
-
 			const result = HTTP.call('GET', url, {});
-			console.log('RESULT:' + result);
 			var resultJSON = JSON.parse(result.content);
-			console.log('RESULTJSON:' + resultJSON);
 
-			var show, schedule, officialName, type, language, status, runtime, premiered, scheduleTime, network, country, imdbId, imageSmallURL, imageURL, summary, showId, genres, scheduleDays;
+			var show, schedule, status, runtime, scheduleTime, network, scheduleDays, imageSmallURL, imageURL;
 			
 			show = resultJSON;
 			schedule = show.schedule;
-			apiId = show.id;
-			officialName = show.name;
-			type = show.type;
-			language = show.language;
 			status = show.status;
 			runtime = show.runtime;
-			premiered = show.premiered;
 			scheduleTime = schedule.time;
 			scheduleDays = schedule.days;
 
 			if(show.webChannel) {
 				//example: Netflix, Hulu, Amazon
 				network = show.webChannel.name;
-				country = show.webChannel.country.name;
 			}
 			else {
 				network = show.network.name;
-				country = show.network.country.name;
 			}
 
-			imdbId = show.externals.imdb;
 			if(show.image){
 				imageSmallURL = show.image.medium;
 				imageURL = show.image.original;
 			}
-			summary = show.summary;
-			genres = show.genres;
 
-			Meteor.call('shows.update.action', showId, apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary);
+			Meteor.call('shows.update.action', showId, apiId, status, runtime, scheduleTime, scheduleDays, network, imageSmallURL, imageURL);
+			Meteor.call('episodes.search', showId, apiId);
+
+			return true;
 		} catch (e){
 			console.log(e);
+			return false;
 		}
 	},
 
@@ -151,7 +129,6 @@ Meteor.methods({
 	},
 
 	'shows.search'(name){
-		/*console.log('in shows.search');*/
 		check(name, String);
 
 

@@ -16,42 +16,31 @@ if (Meteor.isServer) {
 
 Meteor.methods({
 	'episodes.insert'(showId, episodeIndex, name, season, number, airDate, airTime, runtime, imageSmallURL, imageURL, summary) {
-		/*console.log('in episodes.insert');*/
-
 		check(showId, String);
 		check(episodeIndex, Number);
-/*		check(name, String);
-		check(season, Number);
-		check(number, Number);
-		check(airDate, String);
-		check(airTime, String);
-		check(runtime, Number);
-		check(imageSmallURL, String);
-		check(imageURL, String);
-		check(summary, String);*/
 
-		var episodeId = Episodes.insert({
-			showId: showId,
-			episodeIndex: episodeIndex,
-			name: name,
-			season: season,
-			number: number,
-			airDate: airDate,
-			airTime: airTime,
-			runtime: runtime,
-			imageSmallURL: imageSmallURL,
-			imageURL: imageURL,
-			summary: summary,
-			createdAt: new Date()
-		});
-
-		/*console.log('finished inserting episode');*/
-
-		return episodeId;
+		try{
+			var episodeId = Episodes.insert({
+				showId: showId,
+				episodeIndex: episodeIndex,
+				name: name,
+				season: season,
+				number: number,
+				airDate: airDate,
+				airTime: airTime,
+				runtime: runtime,
+				imageSmallURL: imageSmallURL,
+				imageURL: imageURL,
+				summary: summary,
+				createdAt: new Date()
+			});
+		} catch(e){
+			console.log('Episode Already Added');
+		}
 	},
 
 	'episodes.search'(showId, apiId){
-		/*console.log('in episodes.search');*/
+		console.log('APIID2: ' + apiId);
 
 		check(showId, String);
 		check(apiId, Number)
@@ -81,7 +70,7 @@ Meteor.methods({
 
 					console.log("= S" + season + "E" + number + ": " + name);
 
-					episodeId = Meteor.call('episodes.insert', showId, episodeIndex, name, season, number, airDate, airTime, runtime, imageSmallURL, imageURL, summary);
+					Meteor.call('episodes.insert', showId, episodeIndex, name, season, number, airDate, airTime, runtime, imageSmallURL, imageURL, summary);
 				} catch(e) {
 					console.log(e);
 				}
@@ -102,14 +91,6 @@ Meteor.methods({
 			  }).fetch().map(x => x[field]), true);
 
 			return results;
-		} catch (e){
-			console.log(e);
-		}
-	},
-
-	'episodes.update'(showId, apiId){
-		try{
-			console.log('episodes.update - ' + 'showId: ' + showId + ' - apiId: ' + apiId);
 		} catch (e){
 			console.log(e);
 		}

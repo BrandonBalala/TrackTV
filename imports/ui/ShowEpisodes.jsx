@@ -182,7 +182,7 @@ class ShowEpisodes extends Component{
 		else
 			this.renderShowStatusButton();
 
-		this.updateListOfEpisodes(showId, apiId);
+		/*this.updateListOfEpisodes(showId, apiId);*/
 		this.getSeasonList(showId);
 	}
 	
@@ -197,7 +197,7 @@ class ShowEpisodes extends Component{
 		else
 			this.renderShowStatusButton();
 
-		this.updateListOfEpisodes(showId, apiId);
+		/*this.updateListOfEpisodes(showId, apiId);*/
 		this.getSeasonList(showId);
 	}
 
@@ -207,10 +207,10 @@ class ShowEpisodes extends Component{
 		});
 	}
 
-	updateListOfEpisodes(showId, apiId){
+/*	updateListOfEpisodes(showId, apiId){
 		Meteor.call('shows.update', showId, apiId);
 		Meteor.call('episodes.update', showId, apiId);
-	}
+	}*/
 
 	render(){
 		return(

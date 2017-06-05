@@ -50,21 +50,31 @@ handleSubmit(event){
    });
   }
 
+/*  updateShowAndEpisodes(showId){
+    Meteor.call('shows.update', showId);
+  }*/
+
   modifyActiveShow(event){
     var activeShow = event.target.id;
 
-    ReactDOM.render(
-        <Segment piled raised>
-        <ShowEpisodes 
-        showId={activeShow}
-        />
-        </Segment>
-      ,
-      document.getElementById('activeShowSection')
-    );
+    /*this.updateShowAndEpisodes(activeShow);*/
 
-    var episodeSection = document.querySelector('.showEp');
-    smoothScroll(episodeSection);
+    Meteor.call('shows.update', activeShow, (error, result) => {
+      if(result){
+        ReactDOM.render(
+          <Segment piled raised>
+          <ShowEpisodes 
+          showId={activeShow}
+          />
+          </Segment>
+          ,
+          document.getElementById('activeShowSection')
+        );
+
+        var episodeSection = document.querySelector('.showEp');
+        smoothScroll(episodeSection);
+      }
+    });
   }
 
   render() {
@@ -109,7 +119,7 @@ export default createContainer(() => {
   Meteor.subscribe('shows');
 
   return {
-    shows: Shows.find({}, { sort: { createdAt: -1 } }).fetch(),
+    shows: Shows.find({}, { sort: { name: 1 } }).fetch(),
     currentUser: Meteor.user(),
   };
 }, App);
