@@ -107,10 +107,9 @@ Meteor.methods({
 		}
 	},
 
-	'episode.update'(showId, apiId){
+	'episodes.update'(showId, apiId){
 		try{
-			console.log(showId);
-			console.log(apiId);
+			console.log('episodes.update - ' + 'showId: ' + showId + ' - apiId: ' + apiId);
 		} catch (e){
 			console.log(e);
 		}

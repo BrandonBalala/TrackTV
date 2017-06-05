@@ -47,6 +47,87 @@ Meteor.methods({
 		return showId;
 	},
 
+	'shows.update.action'(showId, apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary) {
+		/*console.log('in shows.insert');*/
+
+		check(apiId, Number);
+		check(name, String);
+
+		Shows.update(
+		{ _id: showId },
+		{
+			apiId: apiId,
+			name: name,
+			type: type,
+			genres: genres,
+			language: language,
+			status: status,
+			runtime: runtime,
+			premiered: premiered,
+			scheduleTime: scheduleTime,
+			scheduleDays: scheduleDays,
+			network: network,
+			country: country,
+			imdbId: imdbId,
+			imageSmallURL: imageSmallURL,
+			imageURL: imageURL,
+			summary: summary,
+			createdAt: new Date()
+		});
+
+		return showId;
+	},
+
+
+	'shows.update'(showId, apiId){
+		var url = "http://api.tvmaze.com/shows/" + apiId;
+
+		try{
+			console.log('shows.update - ' + 'showId: ' + showId + ' - apiId: ' + apiId);
+
+			const result = HTTP.call('GET', url, {});
+			console.log('RESULT:' + result);
+			var resultJSON = JSON.parse(result.content);
+			console.log('RESULTJSON:' + resultJSON);
+
+			var show, schedule, officialName, type, language, status, runtime, premiered, scheduleTime, network, country, imdbId, imageSmallURL, imageURL, summary, showId, genres, scheduleDays;
+			
+			show = resultJSON;
+			schedule = show.schedule;
+			apiId = show.id;
+			officialName = show.name;
+			type = show.type;
+			language = show.language;
+			status = show.status;
+			runtime = show.runtime;
+			premiered = show.premiered;
+			scheduleTime = schedule.time;
+			scheduleDays = schedule.days;
+
+			if(show.webChannel) {
+				//example: Netflix, Hulu, Amazon
+				network = show.webChannel.name;
+				country = show.webChannel.country.name;
+			}
+			else {
+				network = show.network.name;
+				country = show.network.country.name;
+			}
+
+			imdbId = show.externals.imdb;
+			if(show.image){
+				imageSmallURL = show.image.medium;
+				imageURL = show.image.original;
+			}
+			summary = show.summary;
+			genres = show.genres;
+
+			Meteor.call('shows.update.action', showId, apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary);
+		} catch (e){
+			console.log(e);
+		}
+	},
+
 	'shows.remove'(showId) {
 		check(showId, String);
 
@@ -133,14 +214,14 @@ Meteor.methods({
 			  }
 			},
 
-	'shows.getShowApiId'(showId){
-		try{
-			var result = Shows.findOne({_id: { $eq: showId } }, {});
-			console.log(result['apiId']);
-			
-			return result['apiId'];
-		} catch (e){
-			console.log(e);
-		}
-	},
+			'shows.getShowApiId'(showId){
+				try{
+					var result = Shows.findOne({_id: { $eq: showId } }, {});
+					console.log(result['apiId']);
+
+					return result['apiId'];
+				} catch (e){
+					console.log(e);
+				}
+			},
 		});

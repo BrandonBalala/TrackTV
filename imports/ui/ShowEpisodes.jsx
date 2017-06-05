@@ -95,8 +95,6 @@ class ShowEpisodes extends Component{
 	}
 
 	renderShowStatusButton(status){
-		console.log('renderShowStatusButton STATUS: ' + status);
-
 	    /*var trackedShows = this.props.trackedShows;*/
 	    var isLoggedIn = Meteor.userId();
 
@@ -148,7 +146,7 @@ class ShowEpisodes extends Component{
 		if(imdbId){
 			var imdbURL = 'http://www.imdb.com/title/' + imdbId;
 			return(
-				<a href={imdbURL}><Icon name='video' size='huge'/></a>
+				<a href={imdbURL}><Icon name='video' size='large'/></a>
 				);
 		}
 	}
@@ -158,6 +156,7 @@ class ShowEpisodes extends Component{
 			(season) => 
 			{
 				var showId = this.props.showId;
+				var trackedShow = this.props.trackedShows ? true : false;
 
 				return(
 						//acordion
@@ -165,6 +164,7 @@ class ShowEpisodes extends Component{
 						key={season}
 						season={season}
 						showId={showId}
+						trackedShow={trackedShow}
 						/>
 						);
 			}
@@ -172,7 +172,7 @@ class ShowEpisodes extends Component{
 	}
 
 	componentDidMount(){
-		/*this.activateLoader();*/
+		console.log('componentDidMount');
 
 		var showId = this.props.showId;
 		var apiId = this.props.show['apiId'];
@@ -184,13 +184,10 @@ class ShowEpisodes extends Component{
 
 		this.updateListOfEpisodes(showId, apiId);
 		this.getSeasonList(showId);
-
-		/*this.disableLoader();*/
 	}
-
 	
 	componentWillReceiveProps(nextProps){
-		/*this.activateLoader();*/
+		console.log('componentWillReceiveProps');
 
 		var showId = nextProps.showId;
 		var apiId = nextProps.show['apiId'];
@@ -202,8 +199,6 @@ class ShowEpisodes extends Component{
 
 		this.updateListOfEpisodes(showId, apiId);
 		this.getSeasonList(showId);
-
-		/*this.disableLoader();*/
 	}
 
 	getSeasonList(showId){
@@ -213,7 +208,8 @@ class ShowEpisodes extends Component{
 	}
 
 	updateListOfEpisodes(showId, apiId){
-		Meteor.call('episode.update', showId, apiId);
+		Meteor.call('shows.update', showId, apiId);
+		Meteor.call('episodes.update', showId, apiId);
 	}
 
 	render(){

@@ -27,13 +27,15 @@ class Season extends Component {
 
 		var season = this.props.season;
 		var episodes = this.props.episodes;
+		var trackedShow = this.props.trackedShow;
 
 		if(episodes){
 			return episodes.map((episode) => {
 				return (
 					<Episode 
 					key={episode._id} 
-					episode={episode} />
+					episode={episode}
+					trackedShow={trackedShow} />
 					);
 			});
 		}
@@ -72,6 +74,7 @@ class Season extends Component {
 Season.propTypes = {
 	season: PropTypes.number.isRequired,
 	showId: PropTypes.string.isRequired,
+	trackedShow: PropTypes.bool.isRequired,
 	episodes: PropTypes.array.isRequired,
 	currentUser: PropTypes.object,
 };

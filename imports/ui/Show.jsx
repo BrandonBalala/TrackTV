@@ -21,7 +21,7 @@ export default class Show extends Component {
         <Image src={this.props.show.imageURL}/>
         <Card.Content>
           <Card.Header>
-            <span className="text" id={this.props.show._id} onClick={this.props.modifyActiveShow.bind(this)}>
+            <span className="text" id={this.props.show._id} onClick={this.props.modifyActiveShow.bind(this)} apiId={this.props.show.apiId}>
             {this.props.show.name}
             </span>
           </Card.Header>
