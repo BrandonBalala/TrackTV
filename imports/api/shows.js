@@ -70,7 +70,7 @@ Meteor.methods({
 		var showFound = Shows.findOne({_id: { $eq: showId } });
 		var apiId = showFound.apiId;
 
-		console.log(apiId);
+		// console.log(apiId);
 		var url = "http://api.tvmaze.com/shows/" + apiId;
 
 		try{
@@ -81,15 +81,15 @@ Meteor.methods({
 			
 			show = resultJSON;
 			schedule = show.schedule;
-			console.log(schedule);
+			// console.log(schedule);
 			status = show.status;
-			console.log(status);
+			// console.log(status);
 			runtime = show.runtime;
-			console.log(runtime);
+			// console.log(runtime);
 			scheduleTime = schedule.time;
-			console.log(scheduleTime);
+			// console.log(scheduleTime);
 			scheduleDays = schedule.days;
-			console.log(scheduleDays);
+			// console.log(scheduleDays);
 			if(show.webChannel) {
 				//example: Netflix, Hulu, Amazon
 				network = show.webChannel.name;
@@ -97,33 +97,32 @@ Meteor.methods({
 			else {
 				network = show.network.name;
 			}
-			console.log(network);
+			// console.log(network);
 
 			if(show.image){
 				imageSmallURL = show.image.medium;
 				imageURL = show.image.original;
 			}
-			console.log(imageSmallURL);
-			console.log(imageURL);
+			// console.log(imageSmallURL);
+			// console.log(imageURL);
 
 			Meteor.call('shows.update.action', showId, apiId, status, runtime, scheduleTime, scheduleDays, network, imageSmallURL, imageURL, (error, result) => {
-				if(result){
+				if(!error){
 					console.log('shows.update.action SUCCESS');
 				}
 			});
-			console.log('1');
+			console.log('1b');
 			Meteor.call('episodes.search', showId, apiId, (error, result) => {
-				if(result){
+				if(!error){
 					console.log('episodes.search SUCCESS');
 				}
 			});
-			console.log('2');
+			console.log('2b');
 
 			return true;
-			console.log('3');
 		} catch (e){
-			console.log('4');
-			console.log(e);
+			// console.log('4b');
+			// console.log(e);
 			return false;
 		}
 	},

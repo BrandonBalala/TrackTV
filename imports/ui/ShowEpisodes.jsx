@@ -231,6 +231,12 @@ export default createContainer((props) => {
 	const userId = Meteor.userId();
 	const showId = props.showId;
 
+	Meteor.call('shows.update', showId, (error, result) => {
+      	if(!error){
+      		console.log("done updating");
+		}
+	});
+
 	return {
 		show: Shows.findOne({_id: { $eq: showId } }),
 		currentUser: Meteor.user(),

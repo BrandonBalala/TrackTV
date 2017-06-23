@@ -54,10 +54,9 @@ handleSubmit(event){
     var activeShow = event.target.id;
 
     /*this.updateShowAndEpisodes(activeShow);*/
+    console.log("a1");
 
-    Meteor.call('shows.update', activeShow, (error, result) => {
-      if(result){
-        ReactDOM.render(
+    ReactDOM.render(
           <Segment piled raised>
           <ShowEpisodes 
           showId={activeShow}
@@ -67,10 +66,9 @@ handleSubmit(event){
           document.getElementById('activeShowSection')
         );
 
-        var episodeSection = document.querySelector('.showEp');
+     var episodeSection = document.querySelector('.showEp');
+        console.log("a5");
         smoothScroll(episodeSection);
-      }
-    });
   }
 
   render() {
@@ -79,7 +77,7 @@ handleSubmit(event){
      {/*<CustomSidebar/>*/}
      <header>
      <h1>Track TV</h1>
-     <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+     <form className="search-bar" onSubmit={this.handleSubmit.bind(this)} >
      <input
      type="text"
      ref="textInput"
