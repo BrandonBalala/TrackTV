@@ -138,10 +138,14 @@ Meteor.methods({
 	},
 
 	'shows.find'(showId) {
+		console.log('IN shows.find: ' + showId);
 		check(showId, String);
 
 		try{
-			var show = Shows.findOne({_id: { $eq: showId } });
+			console.log('before query');
+			var show = Shows.findOne({ _id: { $eq: showId } });
+			console.log('after query');
+			console.log('Show: ' + show);
 
 			return show;
 		} catch(e){

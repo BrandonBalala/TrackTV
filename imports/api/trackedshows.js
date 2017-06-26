@@ -52,19 +52,23 @@ Meteor.methods({
 
 	'trackedShows.findAllShowsOfUser'(userId){
 		check(userId, String);
+		console.log(userId);
 
 		try{
 			var shows = [];
 
 			var temp = TrackedShows.find({userId: { $eq: userId } }).fetch();
+			console.log(temp);
 
 			for (var i = 0; i <  temp.length; i++) {
 				var showId = temp[i]['showId'];
+				console.log(showId);
 				var show = Meteor.call('shows.find', userId);
+				console.log(show);
 
 				shows[i] = show;
 			}
-
+			console.log(shows);
 			return shows;
 		} catch (e){
 			console.log(e);
