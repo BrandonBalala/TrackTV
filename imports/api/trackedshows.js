@@ -50,17 +50,31 @@ Meteor.methods({
 		}
 	},
 
+	'trackedShows.update'(userId, showId, status){
+		TrackedShows.upsert(
+		{$and: [{userId: { $eq: userId } }, {showId: { $eq: showId }}]},
+		{ $set:
+			{
+				status: status
+			}
+		});
+
+		return true;
+	},
+
 	'trackedShows.findAllShowsOfUser'(userId){
 		check(userId, String);
 		console.log(userId);
 
 		try{
-			var shows = [];
+			/*var shows = [];*/
 
-			var temp = TrackedShows.find({userId: { $eq: userId } }).fetch();
-			console.log(temp);
+			var shows = TrackedShows.find({userId: { $eq: userId } }).fetch();
+			console.log(shows);
 
-			for (var i = 0; i <  temp.length; i++) {
+			return shows;
+
+			/*for (var i = 0; i <  temp.length; i++) {
 				var showId = temp[i]['showId'];
 				console.log(showId);
 				var show = Meteor.call('shows.find', userId);
@@ -69,7 +83,7 @@ Meteor.methods({
 				shows[i] = show;
 			}
 			console.log(shows);
-			return shows;
+			return shows;*/
 		} catch (e){
 			console.log(e);
 		}

@@ -18,13 +18,56 @@ class Profile extends Component{
 		};
 	}
 
-	handleItemClick(event, {name}){
+/*	handleItemClick(event, {name}){
 		console.log(name);
 		this.setState({ activeItem: name });
 	}
 
+	renderTable(){
+		if(this.state.activeItem){
+			ReactDOM.render(
+				<Table selectable>
+				<Table.Header>
+				<Table.Row>
+				<Table.HeaderCell>Name</Table.HeaderCell>
+				<Table.HeaderCell>Status</Table.HeaderCell>
+				<Table.HeaderCell>Notes</Table.HeaderCell>
+				</Table.Row>
+				</Table.Header>
+
+				{this.renderTableItems()}
+
+				</Table>
+				,
+				document.getElementById('showTable')
+				);
+		}
+	}
+
+	renderTableItems(){
+		var showsToDisplay = [];
+
+		var status = this.state.activeItem;
+		const shows = this.props.shows;
+
+		if(activeItem == 'all'){
+			showsToDisplay = shows;
+		} else {
+			for (var i = 0; i < shows.length; i++) {
+				if(shows[i].status == status){
+					showsToDisplay.push(shows[i]);
+				}
+			}
+		}
+	}*/
+
 	render() {
 		return (
+			<div className="container">
+			<h1>IN Profile</h1>
+			</div>
+		);
+		/*return (
 			<div className="container">
 			<Menu pointing>
 			<Menu.Item id='all' name='all' active={this.state.activeItem === 'all'} onClick={this.handleItemClick.bind(this)} />
@@ -39,6 +82,8 @@ class Profile extends Component{
 			</Menu.Item>
 			</Menu.Menu>
 			</Menu>
+
+			<div id="showTable"></div>
 
 			<Table selectable>
 			<Table.Header>
@@ -83,16 +128,16 @@ class Profile extends Component{
 			</Table.Body>
 			</Table>
 			</div>
-			);
+			);*/
 	}
 }
 
 Profile.propTypes = {
-	shows: PropTypes.array,
+	/*shows: PropTypes.array,*/
 };
 
 export default createContainer((props) => {
-	Meteor.subscribe('trackedshows');
+/*	Meteor.subscribe('trackedshows');
 
 	const username = props.params.username;
 	const user = Meteor.users.findOne({ username: username });
@@ -100,12 +145,11 @@ export default createContainer((props) => {
 	console.log(username);
 
 	if(user){
-		var shows = Meteor.call('trackedShows.findAllShowsOfUser', user._id);
-
-		console.log('Shows:' + shows);
-
+		console.log(user);
+		var userId = user._id;
+		console.log(userId);
 		return {
-			shows: shows,
+			shows:  TrackedShows.find({ userId : { $eq : userId } }).fetch(),
 		};
-	}
+	}*/
 }, Profile)

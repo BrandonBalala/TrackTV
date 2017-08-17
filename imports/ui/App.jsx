@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Meteor } from 'meteor/meteor';
 import { createContainer } from 'meteor/react-meteor-data';
 import autobind from 'autobind-decorator';
+import { Link } from 'react-router';
 
 import { Shows } from '../api/shows.js';
 import { Episodes } from '../api/episodes.js';
@@ -82,7 +83,8 @@ handleSubmit(event){
      type="text"
      ref="textInput"
      placeholder="Search for a show"
-     />		
+     />
+     <Link to="/profile/ezpz123">MY PROFILE</Link>		
      </form>
 
      <AccountsUIWrapper />

@@ -13,8 +13,7 @@ Meteor.startup(() => {
         <Router history={browserHistory}>
         	<Route path='/' component={MainLayout}>
         		<IndexRoute component={App} />
-        		<Route path="/show/:showId" component={ShowEpisodes} />
-        		<Route path="/profile/:username" component={Profile} />
+                <Route path="/profile/:username" component={Profile} />
         	</Route>
         </Router>, 
         document.getElementById('render-target')
