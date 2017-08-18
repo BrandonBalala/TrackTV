@@ -15,13 +15,15 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-	'history.insert'(userId, episodeId){
+	'history.insert'(userId, episodeId, showId){
 		check(userId, String);
 		check(episodeId, String);
+		check(showId, String);
 
 		try{
 			var historyId = History.insert({
 				userId: userId,
+				showId: showId,
 				episodeId: episodeId,
 				createdAt: new Date()
 			});

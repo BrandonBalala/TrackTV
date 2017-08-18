@@ -29,8 +29,9 @@ class Episode extends Component{
     else{
       var userId = Meteor.userId();
       var episodeId = this.props.episode._id;
+      var showId = this.props.showId;
 
-      Meteor.call('history.insert', userId, episodeId, (error, result) => {
+      Meteor.call('history.insert', userId, episodeId, showId, (error, result) => {
         
       });
     }
@@ -64,6 +65,7 @@ Episode.propTypes = {
   episode: PropTypes.object.isRequired,
   trackedShow: PropTypes.bool,
   seen: PropTypes.object,
+  showId: PropTypes.string.isRequired
 };
 
 export default createContainer((props) => {

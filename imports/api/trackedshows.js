@@ -25,7 +25,8 @@ Meteor.methods({
 				userId: userId,
 				showId: showId,
 				status: status,	//watching, planToWatch, completed, dropped, onHold
-				createdAt: new Date()
+				createdAt: new Date(),
+				modifiedAt: new Date(),
 			});
 
 			return true;
@@ -55,7 +56,8 @@ Meteor.methods({
 		{$and: [{userId: { $eq: userId } }, {showId: { $eq: showId }}]},
 		{ $set:
 			{
-				status: status
+				status: status,
+				modifiedAt: new Date(),
 			}
 		});
 

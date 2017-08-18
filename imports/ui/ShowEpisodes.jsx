@@ -123,21 +123,6 @@ class ShowEpisodes extends Component{
 	    /*var trackedShows = this.props.trackedShows;*/
 	    var isLoggedIn = Meteor.userId();
 
-/*	    let trackShowBtn = null;
-	    let currentlyWatchingBtn = null;
-	    let watchLaterBtn = null;
-	    let putOnHoldBtn = null;
-	    let droppedBtn = null;
-
-	    if(!isLoggedIn){
-	    	trackShowBtn = <Button size='tiny' color='green' disabled='true'>Track Show, Login First</Button>;
-	    } else{
-	    	//watching, planToWatch, completed, dropped, onHold
-	    	if(status == '')
-
-	    }*/
-
-
 		ReactDOM.render(
 			<Segment compact='true'>
 				{ !isLoggedIn ? (

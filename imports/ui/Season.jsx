@@ -28,6 +28,7 @@ class Season extends Component {
 		var season = this.props.season;
 		var episodes = this.props.episodes;
 		var trackedShow = this.props.trackedShow;
+		var showId = this.props.showId;
 
 		if(episodes){
 			return episodes.map((episode) => {
@@ -35,7 +36,8 @@ class Season extends Component {
 					<Episode 
 					key={episode._id} 
 					episode={episode}
-					trackedShow={trackedShow} />
+					trackedShow={trackedShow}
+					showId={showId} />
 					);
 			});
 		}

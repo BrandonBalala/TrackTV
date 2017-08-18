@@ -84,7 +84,7 @@ handleSubmit(event){
      ref="textInput"
      placeholder="Search for a show"
      />
-     <Link to="/profile/ezpz123">MY PROFILE</Link>		
+     <Link to="/profile">MY PROFILE</Link>		
      </form>
 
      <AccountsUIWrapper />
