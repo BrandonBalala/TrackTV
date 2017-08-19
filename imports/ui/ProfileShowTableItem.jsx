@@ -68,6 +68,8 @@ export default createContainer((props) => {
 	const showId = props.showId;
 	const userId = Meteor.user()._id;
 
+	Meteor.call('shows.update', props.showId);
+
 	return {
 		show: Shows.findOne({_id: { $eq: showId }}),
 		totalEpisodes: Episodes.find({showId: { $eq: showId }}).count(),

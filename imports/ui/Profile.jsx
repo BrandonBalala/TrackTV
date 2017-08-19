@@ -21,12 +21,64 @@ class Profile extends Component{
     this.state = {
       activeItem: 'all',
     };
+
   }
 
   handleItemClick(event, {id}){
     console.log(id);
     this.setState({ activeItem: id });
+/*    this.updateTableItems();*/
   }
+
+/*  componentDidMount(){
+    this.updateTableItems();
+  }*/
+
+/*  updateTableItems(){
+
+    var showsToDisplay = [];
+
+    var status = this.state.activeItem;
+    console.log(status);
+    const shows = this.props.shows;
+    console.log("shows:");
+    console.log(shows);
+
+    if(status != 'all'){
+      for (var i = 0; i < shows.length; i++) {
+        if(shows[i].status == status){
+          showsToDisplay.push(shows[i]);
+        }
+      }
+    } else {
+      showsToDisplay = shows;
+    }
+
+    console.log("showsToDisplay");
+    console.log(showsToDisplay);
+    if(showsToDisplay.length){
+      var cntr = 0;
+
+      ReactDOM.render(
+          showsToDisplay.map((trackedShow) => {
+            var showId = trackedShow.showId;
+            cntr++;
+            return (
+              <ProfileShowTableItem 
+              cntr={cntr}
+              key={trackedShow._id}
+              trackedShow={trackedShow}
+              showId={showId}
+              modifyActiveShow={this.modifyActiveShow.bind(this)} 
+              />
+            );
+          })
+          ,
+          document.getElementById('tableItems')
+      );
+    }
+  }*/
+
 
   renderTableItems(){
     var showsToDisplay = [];
@@ -122,6 +174,7 @@ class Profile extends Component{
         </Table.Header>
 
         <Table.Body>
+        {/*<div id="tableItems"></div>*/}
         {this.renderTableItems()}
         </Table.Body>
       </Table>
