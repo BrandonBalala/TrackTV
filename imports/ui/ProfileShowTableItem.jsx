@@ -14,7 +14,6 @@ import { Table, Image, Label, Statistic } from 'semantic-ui-react';
 class ProfileShowTableItem extends Component{
 	constructor(props) {
 		super(props);
-
 	}
 
 	render() {
@@ -39,7 +38,7 @@ class ProfileShowTableItem extends Component{
 		var progress = this.props.seenEpisodes + "/" + this.props.totalEpisodes;
 
 		return (
-	    	<Table.Row>
+	    	<Table.Row onClick={this.props.modifyActiveShow.bind(this)}>
            		<Table.Cell>{this.props.cntr}</Table.Cell>
 	        	<Table.Cell><Image size="tiny" src={this.props.show.imageSmallURL}/></Table.Cell>
 	         	<Table.Cell>{this.props.show.name}</Table.Cell>

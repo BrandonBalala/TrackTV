@@ -8,7 +8,7 @@ import { Link } from 'react-router';
 import { TrackedShows } from '../api/trackedshows.js';
 import { Shows } from '../api/shows.js';
 
-import ProfileShowTableItem from './ProfileShowTableItem.jsx';
+import ProfileShowTable from './ProfileShowTable.jsx';
 
 import { Table, Menu, Input } from 'semantic-ui-react';
 
@@ -20,74 +20,123 @@ class Profile extends Component{
 
     this.state = {
       activeItem: 'all',
+      user: null,
+      shows: new Array(),
     };
+  }
 
+  componentDidMount() {
+    console.log('getUserAndShows');
+    this.getUserAndShows();
+  }
+
+  getUserAndShows() {
+    var username = this.props.params.username;
+    console.log('username: ' + username);
+    var shows = new Array();
+    var user = null;
+
+    if(username){
+      console.log('CASE 1');
+      Meteor.call('trackedShows.getUser', username, (error, result) => {
+        console.log('CASE 1');
+
+        if(result){
+          this.setState({
+            user: result,
+            /*shows: TrackedShows.find({ userId: { $eq: result._id } }).fetch()*/
+            }
+          , this.updateShowTable()
+          );
+
+          console.log('USER');
+          console.log(this.state.user);
+/*          console.log('SHOWS');
+          console.log(this.state.shows);*/
+        }
+      });
+    }
+    else {
+      console.log(this.props.user);
+      console.log(Meteor.user());
+      if(this.props.user){
+        user = this.props.user;
+        /*shows =  TrackedShows.find({ userId: { $eq: user._id } }).fetch();*/
+        console.log('CASE 2');
+      }
+      else{
+        console.log('CASE 3');
+      }
+
+      this.setState({
+        user: user,
+        /*shows: shows*/
+        }
+      , this.updateShowTable()
+      );
+    }
+
+      console.log('USER');
+      console.log(this.state.user);
+      /*console.log('SHOWS');
+      console.log(this.state.shows);*/
   }
 
   handleItemClick(event, {id}){
     console.log(id);
-    this.setState({ activeItem: id });
-/*    this.updateTableItems();*/
+    this.setState({ activeItem: id }
+    , this.updateShowTable()
+    );
   }
 
-/*  componentDidMount(){
-    this.updateTableItems();
-  }*/
-
-/*  updateTableItems(){
-
-    var showsToDisplay = [];
-
-    var status = this.state.activeItem;
-    console.log(status);
-    const shows = this.props.shows;
-    console.log("shows:");
-    console.log(shows);
-
-    if(status != 'all'){
-      for (var i = 0; i < shows.length; i++) {
-        if(shows[i].status == status){
-          showsToDisplay.push(shows[i]);
-        }
-      }
-    } else {
-      showsToDisplay = shows;
-    }
-
-    console.log("showsToDisplay");
-    console.log(showsToDisplay);
-    if(showsToDisplay.length){
-      var cntr = 0;
-
+  updateShowTable(){
+    console.log('a');
+    if(!this.state.user){
+      console.log('b');
       ReactDOM.render(
-          showsToDisplay.map((trackedShow) => {
-            var showId = trackedShow.showId;
-            cntr++;
-            return (
-              <ProfileShowTableItem 
-              cntr={cntr}
-              key={trackedShow._id}
-              trackedShow={trackedShow}
-              showId={showId}
-              modifyActiveShow={this.modifyActiveShow.bind(this)} 
-              />
-            );
-          })
-          ,
-          document.getElementById('tableItems')
+        <h2>USER NOT FOUND</h2>
+        ,
+        document.getElementById('showTable')
       );
+      console.log('c');
     }
-  }*/
 
+    console.log('d');
+    var showsToDisplay = this.filterShows();
+    console.log('e');
+    if(!showsToDisplay){
+      console.log('f');
+      ReactDOM.render(
+        <h2>NO SHOWS FOUND</h2>
+        ,
+        document.getElementById('showTable')
+      );
+      console.log('g');
+    }
+    console.log('h');
+    ReactDOM.render(
+      <ProfileShowTable
+        user={this.state.user}
+        activeItem={this.state.activeItem}
+      />
+      ,
+      document.getElementById('showTable')
+    );
+    console.log('i');
 
-  renderTableItems(){
+  }
+
+  filterShows(){
     var showsToDisplay = [];
 
     var status = this.state.activeItem;
-    console.log(status);
-    const shows = this.props.shows;
+    var shows = this.state.shows;
     console.log("shows:");
     console.log(shows);
+
+    if(!shows.length) {
+      return showsToDisplay;
+    }
 
     if(status != 'all'){
       for (var i = 0; i < shows.length; i++) {
@@ -101,52 +150,14 @@ class Profile extends Component{
 
     console.log("showsToDisplay");
     console.log(showsToDisplay);
-    if(showsToDisplay.length){
-      var cntr = 0;
 
-      return showsToDisplay.map((trackedShow) => {
-        var showId = trackedShow.showId;
-        /*var show = Shows.findOne({_id: { $eq: showId }});*/
-        cntr++;
-/*        console.log(cntr);
-        console.log(show);*/
-        return (
-          <ProfileShowTableItem 
-          cntr={cntr}
-          key={trackedShow._id}
-          trackedShow={trackedShow}
-          showId={showId}
-          modifyActiveShow={this.modifyActiveShow.bind(this)} 
-          />
-        );
-      });
-    }
-  }
-
-  modifyActiveShow(event){
-/*    var activeShow = event.target.id;
-
-    console.log("a1");
-
-    ReactDOM.render(
-          <Segment piled raised>
-          <ShowEpisodes 
-          showId={activeShow}
-          />
-          </Segment>
-          ,
-          document.getElementById('activeShowSection')
-        );
-
-     var episodeSection = document.querySelector('.showEp');
-        console.log("a5");
-        smoothScroll(episodeSection);*/
+    return showsToDisplay;
   }
 
   render() {
     return (
      <div className="container">
-     <h1>TEST</h1>
+     <h1>PROFILE: {this.state.user ? this.state.user.username : "USER NOT FOUND"}</h1>
 
      <Menu pointing>
       <Menu.Item id='all' name='all' active={this.state.activeItem === 'all'} onClick={this.handleItemClick.bind(this)} />
@@ -162,109 +173,23 @@ class Profile extends Component{
       </Menu.Menu>
       </Menu>
 
-      <Table selectable compact>
-        <Table.Header>
-        <Table.Row>
-        <Table.HeaderCell>#</Table.HeaderCell>
-        <Table.HeaderCell>Image</Table.HeaderCell>
-        <Table.HeaderCell>Title</Table.HeaderCell>
-        <Table.HeaderCell>Status</Table.HeaderCell>
-        <Table.HeaderCell>Progress</Table.HeaderCell>
-        </Table.Row>
-        </Table.Header>
-
-        <Table.Body>
-        {/*<div id="tableItems"></div>*/}
-        {this.renderTableItems()}
-        </Table.Body>
-      </Table>
-
-     {/*<div id="showTable"></div>*/}
-     {/*this.renderTable()*/}
-
-
-     {/*<Table selectable>
-     <Table.Header>
-     <Table.Row>
-     <Table.HeaderCell>Name</Table.HeaderCell>
-     <Table.HeaderCell>Status</Table.HeaderCell>
-     <Table.HeaderCell>Notes</Table.HeaderCell>
-     </Table.Row>
-     </Table.Header>
-
-     <Table.Body>
-     <Table.Row>
-     <Table.Cell>John</Table.Cell>
-     <Table.Cell>No Action</Table.Cell>
-     <Table.Cell>None</Table.Cell>
-     </Table.Row>
-     <Table.Row>
-     <Table.Cell>Jamie</Table.Cell>
-     <Table.Cell>Approved</Table.Cell>
-     <Table.Cell>Requires call</Table.Cell>
-     </Table.Row>
-     <Table.Row>
-     <Table.Cell>Jill</Table.Cell>
-     <Table.Cell>Denied</Table.Cell>
-     <Table.Cell>None</Table.Cell>
-     </Table.Row>
-     <Table.Row warning>
-     <Table.Cell>John</Table.Cell>
-     <Table.Cell>No Action</Table.Cell>
-     <Table.Cell>None</Table.Cell>
-     </Table.Row>
-     <Table.Row>
-     <Table.Cell>Jamie</Table.Cell>
-     <Table.Cell positive>Approved</Table.Cell>
-     <Table.Cell warning>Requires call</Table.Cell>
-     </Table.Row>
-     <Table.Row>
-     <Table.Cell>Jill</Table.Cell>
-     <Table.Cell negative>Denied</Table.Cell>
-     <Table.Cell>None</Table.Cell>
-     </Table.Row>
-     </Table.Body>
-     </Table>*/}
-     </div>
+      <div id="showTable"></div>
+      </div>
      );
   }
 }
 
 Profile.propTypes = {
-  shows: PropTypes.array.isRequired,
+  user: PropTypes.object,
 };
 
 export default createContainer((props) => {
-
   Meteor.subscribe('trackedShows');
 
-  const username = props.params.username;
-  var user = null;
+  console.log('METEOR.USER()');
+  console.log(Meteor.user());
 
-  if(username){
-    console.log('from parms');
-    user = Meteor.users.findOne({ username: username });
-  }
-  else if(Meteor.user()){
-    console.log('from meteor user');
-    user = Meteor.user();
-  }
-
-  console.log("USERNAME: " + username);
-
-  if(user){
-    console.log(user);
-    var userId = user._id;
-    console.log(userId);
-    console.log('1');
-    return {
-      shows:  TrackedShows.find({ userId: { $eq: userId } }).fetch()
-    };
-  } else{
-    console.log('2');
-
-    return {
-      shows: new Array(),
-    };
-  }
+  return {
+    user: Meteor.user()
+  };
 }, Profile);

@@ -207,5 +207,9 @@ Meteor.methods({
 		} catch (e){
 			console.log(e);
 		}
-	}
+	},
+
+	'trackedShows.getUser'(username){
+		return Meteor.users.findOne({ username : { $eq: username } });
+	},
 });
