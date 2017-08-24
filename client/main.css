@@ -65,3 +65,7 @@ form {
         padding-bottom: 5px;
     }
 }
+
+.profileHeader {
+    padding-top: 15px !important;
+}

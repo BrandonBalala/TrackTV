@@ -8,7 +8,7 @@ import { Shows } from '../api/shows.js';
 import { Episodes } from '../api/episodes.js';
 import { History } from '../api/history.js';
 
-import { Table, Image, Label, Statistic } from 'semantic-ui-react';
+import { Table, Image, Label, Statistic, Loader, Segment, Dimmer } from 'semantic-ui-react';
 
 @autobind
 class ProfileShowTableItem extends Component{
@@ -17,7 +17,16 @@ class ProfileShowTableItem extends Component{
 	}
 
 	render() {
-		var color = "";
+		if(!this.props.show){
+			return (
+	          <Table.Row>
+	            <Table.Cell colSpan="5" textAlign="center">
+		        	<Loader active inline='centered' size='medium'/>
+	            </Table.Cell>
+	          </Table.Row>
+			);
+		}
+
 		switch (this.props.show.status) {
 		    case "Running":
 		        color = "green";
@@ -38,7 +47,7 @@ class ProfileShowTableItem extends Component{
 		var progress = this.props.seenEpisodes + "/" + this.props.totalEpisodes;
 
 		return (
-	    	<Table.Row onClick={this.props.modifyActiveShow.bind(this)}>
+	    	<Table.Row id={this.props.show._id} onClick={this.props.modifyActiveShow.bind(this)}>
            		<Table.Cell>{this.props.cntr}</Table.Cell>
 	        	<Table.Cell><Image size="tiny" src={this.props.show.imageSmallURL}/></Table.Cell>
 	         	<Table.Cell>{this.props.show.name}</Table.Cell>

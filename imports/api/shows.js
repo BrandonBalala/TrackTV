@@ -68,6 +68,11 @@ Meteor.methods({
 
 	'shows.update'(showId){
 		var showFound = Shows.findOne({_id: { $eq: showId } });
+
+		if(!showFound){
+			return false;
+		}
+
 		var apiId = showFound.apiId;
 
 		// console.log(apiId);
