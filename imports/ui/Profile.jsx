@@ -37,7 +37,9 @@ class Profile extends Component{
   }
 
   modifyActiveShow(event){
-    var showId = event.target.id;
+    var showId = event.target.parentElement.id;
+    console.log(event.target);
+    console.log(event.target.parentElement);
     console.log('ROW CLICKED');
     console.log(showId);
 
