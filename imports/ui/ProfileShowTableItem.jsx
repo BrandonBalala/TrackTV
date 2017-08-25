@@ -63,6 +63,7 @@ ProfileShowTableItem.propTypes = {
 	trackedShow: PropTypes.object.isRequired,
 	showId: PropTypes.string.isRequired,
 	modifyActiveShow: PropTypes.func,
+	updateShows: PropTypes.bool,
 	show: PropTypes.object,
 	totalEpisodes: PropTypes.number,
 	seenEpisodes: PropTypes.number,
@@ -76,7 +77,10 @@ export default createContainer((props) => {
 	const showId = props.showId;
 	const userId = Meteor.user()._id;
 
-	Meteor.call('shows.update', props.showId);
+
+	if(props.updateShows){
+		Meteor.call('shows.update', props.showId);
+	}
 
 	return {
 		show: Shows.findOne({_id: { $eq: showId }}),

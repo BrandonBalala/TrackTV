@@ -124,7 +124,7 @@ class ShowEpisodes extends Component{
 	    var isLoggedIn = Meteor.userId();
 
 		ReactDOM.render(
-			<Segment compact='true'>
+			<Segment compact={true}>
 				{ !isLoggedIn ? (
 					<Button size='tiny' color='green' disabled='true'>Track Show, Login First</Button>
 				) : (
@@ -237,7 +237,7 @@ class ShowEpisodes extends Component{
 			<div>
 					<Grid>
 					    <Grid.Column width={4}>
-					      <Image src={this.props.show.imageSmallURL} shape='rounded' bordered='true' centered />
+					      <Image src={this.props.show.imageSmallURL} shape='rounded' bordered={true} centered />
 					    </Grid.Column>
 					    <Grid.Column width={9}>
 					      	<h1>{this.props.show.name}</h1>

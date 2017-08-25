@@ -23,6 +23,7 @@ class Profile extends Component{
     this.state = {
       activeItem: 'all',
       activeShow: null,
+      updateShows: true,
     };
   }
 
@@ -33,16 +34,13 @@ class Profile extends Component{
 
   handleItemClick(event, {id}){
     console.log('status: ' + id);
-    this.setState({ activeItem: id });
+    var updateCntr = this.state.updateCntr;
+    updateCntr++;
+    this.setState({ activeItem: id, updateShows: false });
   }
 
   modifyActiveShow(event){
     var showId = event.target.parentElement.id;
-    console.log(event.target);
-    console.log(event.target.parentElement);
-    console.log('ROW CLICKED');
-    console.log(showId);
-
     ReactDOM.render(
       <Segment piled raised>
         <ShowEpisodes 
@@ -91,7 +89,8 @@ class Profile extends Component{
         key={trackedShow._id}
         trackedShow={trackedShow}
         showId={showId}
-        modifyActiveShow={this.modifyActiveShow.bind(this)} 
+        modifyActiveShow={this.modifyActiveShow.bind(this)}
+        updateShows={this.state.updateShows} 
         />
       );
     });
