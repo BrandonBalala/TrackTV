@@ -25,7 +25,7 @@ class App extends Component{
 		this.state = {
       activeShow: null,
     };
-}
+  }
 
 handleSubmit(event){
   event.preventDefault();
@@ -52,24 +52,29 @@ handleSubmit(event){
   }
 
   modifyActiveShow(event){
-    var activeShow = event.target.id;
 
-    /*this.updateShowAndEpisodes(activeShow);*/
-    console.log("a1");
+    var activeShow = event.target.id;
+    console.log('activeShow: ' + activeShow);
+
+    Meteor.call('shows.update', activeShow, (error, result) => {
+      if(!error){
+        console.log("done updating");
+        console.log(error);
+      }
+    });
 
     ReactDOM.render(
-          <Segment piled raised>
-          <ShowEpisodes 
-          showId={activeShow}
-          />
-          </Segment>
-          ,
-          document.getElementById('activeShowSection')
-        );
+      <Segment piled raised>
+        <ShowEpisodes 
+        showId={activeShow}
+        />
+      </Segment>
+      ,
+      document.getElementById('activeShowSection')
+    );
 
-     var episodeSection = document.querySelector('.showEp');
-        console.log("a5");
-        smoothScroll(episodeSection);
+    var episodeSection = document.querySelector('.showEp');
+    smoothScroll(episodeSection);
   }
 
   render() {

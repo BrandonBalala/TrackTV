@@ -16,12 +16,7 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-	'shows.insert'(apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary) {
-		/*console.log('in shows.insert');*/
-
-		check(apiId, Number);
-		check(name, String);
-
+	'shows.insert'(apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId) {
 		var showId = Shows.insert({
 			apiId: apiId,
 			name: name,
@@ -39,26 +34,36 @@ Meteor.methods({
 			imageSmallURL: imageSmallURL,
 			imageURL: imageURL,
 			summary: summary,
-			createdAt: new Date()
+			createdAt: new Date(),
+			modifiedAt: new Date(),
+			updatedId: updatedId
 		});
-
-		/*console.log('finished inserting show');*/
 
 		return showId;
 	},
 
-	'shows.update.action'(showId, apiId, status, runtime, scheduleTime, scheduleDays, network, imageSmallURL, imageURL) {
+	'shows.update.action'(showId, apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId) {
 		Shows.update(
-		{$and: [{apiId: { $eq: apiId } }, {showId: { $eq: showId }}]},
+		{ $and: [{ apiId: { $eq: apiId } }, { _id: { $eq: showId } }] },
 		{ $set:
 			{
+				name: name,
+				type: type,
+				genres: genres,
+				language: language,
 				status: status,
 				runtime: runtime,
+				premiered: premiered,
 				scheduleTime: scheduleTime,
 				scheduleDays: scheduleDays,
 				network: network,
+				country: country,
+				imdbId: imdbId,
 				imageSmallURL: imageSmallURL,
 				imageURL: imageURL,
+				summary: summary,
+				modifiedAt: new Date(),
+				updatedId: updatedId
 			}
 		});
 
@@ -75,54 +80,57 @@ Meteor.methods({
 
 		var apiId = showFound.apiId;
 
-		// console.log(apiId);
+		/*console.log(apiId);*/
 		var url = "http://api.tvmaze.com/shows/" + apiId;
 
 		try{
 			const result = HTTP.call('GET', url, {});
 			var resultJSON = JSON.parse(result.content);
 
-			var show, schedule, status, runtime, scheduleTime, network, scheduleDays, imageSmallURL, imageURL;
-			
+			var show, schedule, apiId, name, type, language, status, runtime, premiered, scheduleTime, network, country, imdbId, imageSmallURL, imageURL, summary, showId, genres, scheduleDays;
+
 			show = resultJSON;
+			console.log(show);
 			schedule = show.schedule;
-			// console.log(schedule);
+			apiId = show.id;
+			name = show.name;
+			type = show.type;
+			language = show.language;
 			status = show.status;
-			// console.log(status);
 			runtime = show.runtime;
-			// console.log(runtime);
+			premiered = show.premiered;
 			scheduleTime = schedule.time;
-			// console.log(scheduleTime);
 			scheduleDays = schedule.days;
-			// console.log(scheduleDays);
+
 			if(show.webChannel) {
-				//example: Netflix, Hulu, Amazon
 				network = show.webChannel.name;
+				country = show.webChannel.country.name;
 			}
 			else {
 				network = show.network.name;
+				country = show.network.country.name;
 			}
-			// console.log(network);
 
+			imdbId = show.externals.imdb;
 			if(show.image){
 				imageSmallURL = show.image.medium;
 				imageURL = show.image.original;
 			}
-			// console.log(imageSmallURL);
-			// console.log(imageURL);
+			summary = show.summary;
+			genres = show.genres;
+			updatedId = show.updated;
 
-			Meteor.call('shows.update.action', showId, apiId, status, runtime, scheduleTime, scheduleDays, network, imageSmallURL, imageURL, (error, result) => {
+			Meteor.call('shows.update.action', showId, apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId, (error, result) => {
 				if(!error){
 					console.log('shows.update.action SUCCESS');
 				}
 			});
-			console.log('1b');
+
 			Meteor.call('episodes.search', showId, apiId, (error, result) => {
 				if(!error){
 					console.log('episodes.search SUCCESS');
 				}
 			});
-			console.log('2b');
 
 			return true;
 		} catch (e){
@@ -202,10 +210,11 @@ Meteor.methods({
 						}
 						summary = show.summary;
 						genres = show.genres;
+						updatedId = show.updated;
 
 						console.log("== Show: " + officialName);
 
-						showId = Meteor.call('shows.insert', apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary);
+						showId = Meteor.call('shows.insert', apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId);
 
 						Meteor.call('episodes.search', showId, apiId);
 					} catch(e) {

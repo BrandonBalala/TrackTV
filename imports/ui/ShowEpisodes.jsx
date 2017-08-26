@@ -126,7 +126,7 @@ class ShowEpisodes extends Component{
 		ReactDOM.render(
 			<Segment compact={true}>
 				{ !isLoggedIn ? (
-					<Button size='tiny' color='green' disabled='true'>Track Show, Login First</Button>
+					<Button size='tiny' color='green' disabled={true}>Track Show, Login First</Button>
 				) : (
 					''
 				)}
@@ -208,22 +208,22 @@ class ShowEpisodes extends Component{
 		else
 			this.renderShowStatusButton();
 
-		/*this.updateListOfEpisodes(showId, apiId);*/
 		this.getSeasonList(showId);
 	}
 	
 	componentWillReceiveProps(nextProps){
-		console.log('componentWillReceiveProps');
+		if(this.props.showId != nextProps.showId){
+			console.log('componentWillReceiveProps');
+			var showId = nextProps.showId;
+			var apiId = nextProps.show['apiId'];
 
-		var showId = nextProps.showId;
-		var apiId = nextProps.show['apiId'];
+			if(nextProps.trackedShows)
+				this.renderShowStatusButton(nextProps.trackedShows.status);
+			else
+				this.renderShowStatusButton();
 
-		if(nextProps.trackedShows)
-			this.renderShowStatusButton(nextProps.trackedShows.status);
-		else
-			this.renderShowStatusButton();
-
-		this.getSeasonList(showId);
+			this.getSeasonList(showId);
+		}
 	}
 
 	getSeasonList(showId){
@@ -275,12 +275,6 @@ export default createContainer((props) => {
 
 	const userId = Meteor.userId();
 	const showId = props.showId;
-
-	Meteor.call('shows.update', showId, (error, result) => {
-      	if(!error){
-      		console.log("done updating");
-		}
-	});
 
 	return {
 		show: Shows.findOne({_id: { $eq: showId } }),
