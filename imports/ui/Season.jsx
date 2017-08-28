@@ -11,7 +11,7 @@ import { Episodes } from '../api/episodes.js';
 
 import Episode from './Episode.jsx';
 
-import { Card, Image, Accordion, Icon, List } from 'semantic-ui-react';
+import { Card, Image, Accordion, Icon, List, Button } from 'semantic-ui-react';
 
 @autobind
 class Season extends Component {
@@ -54,7 +54,12 @@ class Season extends Component {
 
 		    <Accordion.Content>
 		    <List animated divided relaxed verticalAlign='middle'>
-			{this.renderEpisodes()}
+		    	<List.Item>
+			      <List.Content floated='right'>
+			      	<a><b>Mark This Season as Watched</b></a> | <a><b>Unmark This Season</b></a>
+			      </List.Content>
+			    </List.Item>
+				{this.renderEpisodes()}
 			</List>
 			</Accordion.Content>
 

@@ -11,7 +11,7 @@ import { TrackedShows } from '../api/trackedshows.js';
 
 import Season from './Season.jsx';
 
-import { Divider, Icon, Header, Grid, Segment, Image, Label, Button, Dimmer, Loader } from 'semantic-ui-react';
+import { Divider, Icon, Header, Grid, Segment, Image, Label, Button, Dimmer, Loader, List } from 'semantic-ui-react';
 
 @autobind
 class ShowEpisodes extends Component{
@@ -217,12 +217,13 @@ class ShowEpisodes extends Component{
 			var showId = nextProps.showId;
 			var apiId = nextProps.show['apiId'];
 
-			if(nextProps.trackedShows)
-				this.renderShowStatusButton(nextProps.trackedShows.status);
-			else
-				this.renderShowStatusButton();
-
 			this.getSeasonList(showId);
+
+			if(nextProps.trackedShows){
+				this.renderShowStatusButton(nextProps.trackedShows.status);
+			} else {
+				this.renderShowStatusButton();
+			}
 		}
 	}
 
@@ -255,6 +256,13 @@ class ShowEpisodes extends Component{
 				  	</Grid>
 				  	<br/>
 					<div>
+				  	<List>
+  				    	<List.Item>
+					      <List.Content floated='right'>
+					      	<a><b>Mark Entire Show as Watched</b></a> | <a><b>Unmark Entire Show</b></a>
+					      </List.Content>
+					    </List.Item>
+    				</List>
 					{this.renderSeasons()}
 					</div>
 			</div>
