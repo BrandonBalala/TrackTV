@@ -8,6 +8,7 @@ import autobind from 'autobind-decorator';
 import smoothScroll from 'smoothscroll';
 
 import { Episodes } from '../api/episodes.js';
+import { History } from '../api/history.js';
 
 import Episode from './Episode.jsx';
 
@@ -20,6 +21,32 @@ class Season extends Component {
 
 		this.state = {episodes: []};
 	}
+
+  	markSeason(event){
+  		let userId = this.props.currentUser._id;
+  		let episodes = this.props.episodes;
+  		let showId = this.props.showId;
+
+  		
+  		for (var i = 0; i < episodes.length; i++) {
+  			var episodeId = episodes[i]._id;
+		    Meteor.call('history.insert', userId, episodeId, showId, (error, result) => {});
+  		}
+
+  		console.log('done marking season');
+  	}
+
+  	unmarkSeason(event){
+  		let userId = this.props.currentUser._id;
+  		let episodes = this.props.episodes;
+  		
+  		for (var i = 0; i < episodes.length; i++) {
+  			var episodeId = episodes[i]._id;
+		    Meteor.call('history.remove', userId, episodeId, (error, result) => {});
+  		}
+
+  		console.log('done unmarking season');
+  	}
 
 	renderEpisodes(){
 		var episodeSection = document.querySelector('.showEp');
@@ -54,11 +81,16 @@ class Season extends Component {
 
 		    <Accordion.Content>
 		    <List animated divided relaxed verticalAlign='middle'>
-		    	<List.Item>
-			      <List.Content floated='right'>
-			      	<a><b>Mark This Season as Watched</b></a> | <a><b>Unmark This Season</b></a>
-			      </List.Content>
-			    </List.Item>
+		    	{ this.props.currentUser ? 
+			    	<List.Item>
+				      <List.Content floated='right'>
+				      	<a onClick={this.markSeason.bind(this)}><b>Mark Season {this.props.season} as Watched </b></a> 
+				      	|| 
+				      	<a onClick={this.unmarkSeason.bind(this)}><b> Unmark Season {this.props.season}</b></a>
+				      </List.Content>
+				    </List.Item>
+			    :
+		    	'' }
 				{this.renderEpisodes()}
 			</List>
 			</Accordion.Content>

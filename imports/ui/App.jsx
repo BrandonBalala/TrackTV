@@ -14,7 +14,7 @@ import ShowEpisodes from './ShowEpisodes.jsx';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 
 import smoothScroll from 'smoothscroll';
-import { Card, Segment, Divider } from 'semantic-ui-react';
+import { Card, Segment, Divider, Container, Grid } from 'semantic-ui-react';
 
 @autobind
 class App extends Component{
@@ -39,21 +39,22 @@ handleSubmit(event){
 	    ReactDOM.findDOMNode(this.refs.textInput).value = '';
    }
 
-   renderShows() {
-    return this.props.shows.map((show) => {
-     return (
-      <Show 
-      key={show._id} 
-      show={show}
-      modifyActiveShow={this.modifyActiveShow.bind(this)} 
-      />
-      );
-   });
-  }
+renderShows() {
+  return this.props.shows.map((show) => {
+   return (
+    <Show 
+    key={show._id} 
+    show={show}
+    modifyActiveShow={this.modifyActiveShow.bind(this)} 
+    />
+    );
+  });
+}
 
   modifyActiveShow(event){
+    console.log(event.target.parentNode);
 
-    var activeShow = event.target.id;
+    var activeShow = event.target.parentNode.id;
     console.log('activeShow: ' + activeShow);
 
     Meteor.call('shows.update', activeShow, (error, result) => {
@@ -79,7 +80,7 @@ handleSubmit(event){
 
   render() {
     return (
-     <div className="container">
+     <Container>
      {/*<CustomSidebar/>*/}
      <header>
      <h1>Track TV</h1>
@@ -95,9 +96,9 @@ handleSubmit(event){
      <AccountsUIWrapper />
      </header>
 
-     <Card.Group itemsPerRow={4}>
+     <Grid className="showGrid" container stretched={true} textAlign='center' verticalAlign='middle' relaxed>
      {this.renderShows()}
-     </Card.Group>
+     </Grid>
 
      <Divider />
 
@@ -105,7 +106,7 @@ handleSubmit(event){
 
      <div id="activeShowSection"></div> 
      </div>
-     </div>
+     </Container>
      );
   }
 }

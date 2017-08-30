@@ -3,6 +3,8 @@ import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import { HTTP } from 'meteor/http';
 
+import { Episodes } from '../api/episodes.js';
+
 export const History = new Mongo.Collection('history');
 
 if (Meteor.isServer) {
@@ -63,4 +65,32 @@ Meteor.methods({
 			return false;
 		}
 	},
+
+	'history.markEntireShow'(userId, showId){
+		check(userId, String);
+		check(showId, String);
+
+		var episodes = Episodes.find({showId: { $eq: showId }}).fetch();
+
+		for (var i = 0; i < episodes.length; i++) {
+			var episode = episodes[i];
+			var episodeId = episode._id;
+			Meteor.call('history.insert', userId, episodeId, showId);
+		}
+	},
+
+
+	'history.unmarkEntireShow'(userId, showId){
+		check(userId, String);
+		check(showId, String);
+
+		var episodes = Episodes.find({showId: { $eq: showId }}).fetch();
+
+		for (var i = 0; i < episodes.length; i++) {
+			var episode = episodes[i];
+			var episodeId = episode._id;
+			Meteor.call('history.remove', userId, episodeId);
+		}
+	},
+
 });

@@ -69,3 +69,11 @@ form {
 .profileHeader {
     padding-top: 15px !important;
 }
+
+.showGrid {
+    padding-top: 15px !important;    
+}
+
+.showSegment {
+    padding-top: 5px !important;
+}

@@ -21,6 +21,24 @@ class ShowEpisodes extends Component{
 		this.state = {seasons: []};
 	}
 
+  	markEntireShow(event){
+  		let userId = this.props.currentUser._id;
+  		let showId = this.props.showId;
+
+	    Meteor.call('history.markEntireShow', userId, showId, (error, result) => {});
+
+  		console.log('done marking entire show');
+  	}
+
+  	unmarkEntireShow(event){
+  		let userId = this.props.currentUser._id;
+  		let showId = this.props.showId;
+  		
+	    Meteor.call('history.unmarkEntireShow', userId, showId, (error, result) => {});
+
+  		console.log('done unmarking entire show');
+  	}
+
 	trackShow(event){
 	    var showId = this.props.showId;
 	    var userId = this.props.currentUser._id;
@@ -256,14 +274,19 @@ class ShowEpisodes extends Component{
 				  	</Grid>
 				  	<br/>
 					<div>
-				  	<List>
-  				    	<List.Item>
-					      <List.Content floated='right'>
-					      	<a><b>Mark Entire Show as Watched</b></a> | <a><b>Unmark Entire Show</b></a>
-					      </List.Content>
-					    </List.Item>
-    				</List>
-					{this.renderSeasons()}
+						{ this.props.currentUser ?
+						  	<List>
+		  				    	<List.Item>
+							      <List.Content floated='right'>
+							      	<a onClick={this.markEntireShow.bind(this)}><b>Mark Entire Show as Watched </b></a>
+							      	||
+							      	<a onClick={this.unmarkEntireShow.bind(this)}><b> Unmark Entire Show</b></a>
+							      </List.Content>
+							    </List.Item>
+		    				</List>
+	    				:
+	    				'' }
+						{this.renderSeasons()}
 					</div>
 			</div>
 		);

@@ -5,9 +5,8 @@ import classnames from 'classnames';
 import { Link } from 'react-router';
 import autobind from 'autobind-decorator';
 
-import { Card, Image } from 'semantic-ui-react';
+import { Grid, Image, Segment, Label } from 'semantic-ui-react';
 
-// Show component - represents a single show
 @autobind
 export default class Show extends Component {
 
@@ -17,16 +16,12 @@ export default class Show extends Component {
 
   render() {
     return (
-      <Card raised color='orange'>
-        <Image src={this.props.show.imageURL}/>
-        <Card.Content>
-          <Card.Header>
-            <span className="text" id={this.props.show._id} onClick={this.props.modifyActiveShow.bind(this)}>
-            {this.props.show.name}
-            </span>
-          </Card.Header>
-        </Card.Content>
-      </Card>
+      <Grid.Column id={this.props.show._id} stretched={true} computer={4} mobile={8} tablet={4}>
+        <Segment className='showSegment' id={this.props.show._id} onClick={this.props.modifyActiveShow.bind(this)} color='grey'>
+            <Image src={this.props.show.imageSmallURL} shape='rounded'/>
+            <Label attached='bottom'>{this.props.show.name}</Label>
+        </Segment>
+      </Grid.Column>
     );
   }
 }
