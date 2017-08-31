@@ -20,6 +20,7 @@ export default class Show extends Component {
         <Segment className='showSegment' id={this.props.show._id} onClick={this.props.modifyActiveShow.bind(this)} color='grey'>
             <Image src={this.props.show.imageSmallURL} shape='rounded'/>
             <Label attached='bottom'>{this.props.show.name}</Label>
+            {/*<Label color='red' circular floating>22</Label>*/}
         </Segment>
       </Grid.Column>
     );

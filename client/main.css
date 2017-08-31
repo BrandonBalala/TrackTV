@@ -77,3 +77,8 @@ form {
 .showSegment {
     padding-top: 5px !important;
 }
+
+.headerMenu {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+}

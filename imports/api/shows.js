@@ -16,7 +16,7 @@ if (Meteor.isServer) {
 }
 
 Meteor.methods({
-	'shows.insert'(apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId) {
+	'shows.insert'(apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId, rating) {
 		var showId = Shows.insert({
 			apiId: apiId,
 			name: name,
@@ -36,13 +36,16 @@ Meteor.methods({
 			summary: summary,
 			createdAt: new Date(),
 			modifiedAt: new Date(),
-			updatedId: updatedId
+			updatedId: updatedId,
+			rating: rating,
 		});
+
+		console.log('RATING: ' + rating);
 
 		return showId;
 	},
 
-	'shows.update.action'(showId, apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId) {
+	'shows.update.action'(showId, apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId, rating) {
 		Shows.update(
 		{ $and: [{ apiId: { $eq: apiId } }, { _id: { $eq: showId } }] },
 		{ $set:
@@ -63,9 +66,12 @@ Meteor.methods({
 				imageURL: imageURL,
 				summary: summary,
 				modifiedAt: new Date(),
-				updatedId: updatedId
+				updatedId: updatedId,
+				rating: rating
 			}
 		});
+
+		console.log('RATING: ' + rating);
 
 		return true;
 	},
@@ -119,8 +125,9 @@ Meteor.methods({
 			summary = show.summary;
 			genres = show.genres;
 			updatedId = show.updated;
+			rating = show.rating.average;
 
-			Meteor.call('shows.update.action', showId, apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId, (error, result) => {
+			Meteor.call('shows.update.action', showId, apiId, name, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId, rating, (error, result) => {
 				if(!error){
 					console.log('shows.update.action SUCCESS');
 				}
@@ -194,33 +201,34 @@ Meteor.methods({
 					scheduleDays = schedule.days;
 
 					if(show.webChannel) {
-							//example: Netflix, Hulu, Amazon
-							network = show.webChannel.name;
-							country = show.webChannel.country.name;
-						}
-						else {
-							network = show.network.name;
-							country = show.network.country.name;
-						}
-
-						imdbId = show.externals.imdb;
-						if(show.image){
-							imageSmallURL = show.image.medium;
-							imageURL = show.image.original;
-						}
-						summary = show.summary;
-						genres = show.genres;
-						updatedId = show.updated;
-
-						console.log("== Show: " + officialName);
-
-						showId = Meteor.call('shows.insert', apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId);
-
-						Meteor.call('episodes.search', showId, apiId);
-					} catch(e) {
-						console.log(e);
+						//example: Netflix, Hulu, Amazon
+						network = show.webChannel.name;
+						country = show.webChannel.country.name;
 					}
-				}
+					else {
+						network = show.network.name;
+						country = show.network.country.name;
+					}
+
+					imdbId = show.externals.imdb;
+					if(show.image){
+						imageSmallURL = show.image.medium;
+						imageURL = show.image.original;
+					}
+					summary = show.summary;
+					genres = show.genres;
+					updatedId = show.updated;
+					rating = show.rating.average;
+
+					console.log("== Show: " + officialName);
+
+					showId = Meteor.call('shows.insert', apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId, rating);
+
+					Meteor.call('episodes.search', showId, apiId);
+						} catch(e) {
+							console.log(e);
+						}
+					}
 
 				return true;
 			} catch (e) {

@@ -81,19 +81,16 @@ renderShows() {
   render() {
     return (
      <Container>
-     {/*<CustomSidebar/>*/}
      <header>
      <h1>Track TV</h1>
      <form className="search-bar" onSubmit={this.handleSubmit.bind(this)} >
      <input
      type="text"
      ref="textInput"
-     placeholder="Search for a show"
+     placeholder="Lookup Shows"
      />
-     <Link to="/profile">MY PROFILE</Link>		
      </form>
-
-     <AccountsUIWrapper />
+          {/*<Link to="/profile">MY PROFILE</Link>  */} 
      </header>
 
      <Grid className="showGrid" container stretched={true} textAlign='center' verticalAlign='middle' relaxed>

@@ -11,7 +11,7 @@ import { TrackedShows } from '../api/trackedshows.js';
 
 import Season from './Season.jsx';
 
-import { Divider, Icon, Header, Grid, Segment, Image, Label, Button, Dimmer, Loader, List } from 'semantic-ui-react';
+import { Divider, Icon, Header, Grid, Segment, Image, Label, Button, Dimmer, Loader, List, Rating } from 'semantic-ui-react';
 
 @autobind
 class ShowEpisodes extends Component{
@@ -215,6 +215,20 @@ class ShowEpisodes extends Component{
 			);
 	}
 
+	renderRating(){
+		let rating = Math.round(this.props.show.rating);
+
+		return (
+			<div>
+	    	{ rating ? 
+	    		<Rating rating={rating} maxRating={10} icon='star' size='mini' disabled/>
+	    	:
+	    		<Rating defaultRating={0} maxRating={5} icon='star' size='mini' disabled/>
+	    	}
+	    	</div>
+		);
+	}
+
 	componentDidMount(){
 		console.log('componentDidMount');
 
@@ -255,16 +269,17 @@ class ShowEpisodes extends Component{
 		return(
 			<div>
 					<Grid>
-					    <Grid.Column width={4}>
+					    <Grid.Column computer={4} tablet={4} mobile={16} textAlign='center' verticalAlign='middle'>
 					      <Image src={this.props.show.imageSmallURL} shape='rounded' bordered={true} centered />
 					    </Grid.Column>
-					    <Grid.Column width={9}>
+					    <Grid.Column computer={9} tablet={8} mobile={12} verticalAlign='middle'>
 					      	<h1>{this.props.show.name}</h1>
+					      	{this.renderRating()}
 				          	<div dangerouslySetInnerHTML={{ __html: this.props.show.summary }} />
 				          	<br/>
 				          	<div id='showStatusButton'></div>
 					    </Grid.Column>
-					    <Grid.Column width={3}>
+					    <Grid.Column computer={3} tablet={4} mobile={4} verticalAlign='middle'>
 					    	<Label.Group tag>
 					    		{this.renderGenre()}
 					    	</Label.Group>
