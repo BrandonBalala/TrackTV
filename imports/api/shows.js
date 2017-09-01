@@ -223,7 +223,6 @@ Meteor.methods({
 					console.log("== Show: " + officialName);
 
 					showId = Meteor.call('shows.insert', apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId, rating);
-
 					Meteor.call('episodes.search', showId, apiId);
 						} catch(e) {
 							console.log(e);
@@ -246,6 +245,17 @@ Meteor.methods({
 					return result['apiId'];
 				} catch (e){
 					console.log(e);
+				}
+			},
+
+			'shows.getShowsByName'(name){
+				try{
+					//FIGURE OUT REGEXXXX
+					var regex =  ".*name.*";
+					var results = Shows.find({ name: { $regex: regex} })
+				} catch(e) {
+					console.log(e);
+					return [];
 				}
 			},
 		});
