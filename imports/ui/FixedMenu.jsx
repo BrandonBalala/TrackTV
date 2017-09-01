@@ -28,7 +28,7 @@ class FixedMenu extends Component{
       { this.state.menuVisible ?
       (<Menu size='large'>
           <Menu.Item>
-            <Icon name='eye' size='large' color='grey'/>
+            <Icon className='hvr-buzz' name='eye' size='large' color='grey'/>
           </Menu.Item>
           <Menu.Item as='a' href={'/'}>Home</Menu.Item>
           <Menu.Item as='a' href={'/profile/'}>Profile</Menu.Item>

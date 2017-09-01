@@ -76,6 +76,7 @@ form {
 
 .showSegment {
     padding-top: 5px !important;
+    cursor: pointer;
 }
 
 .headerMenu {

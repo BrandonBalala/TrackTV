@@ -82,7 +82,7 @@ renderShows() {
     return (
      <Container>
      <header>
-     <h1>Track TV</h1>
+     <h1 className='hvr-grow'>Track TV</h1>
      <form className="search-bar" onSubmit={this.handleSubmit.bind(this)} >
      <input
      type="text"
