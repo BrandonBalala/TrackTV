@@ -185,6 +185,9 @@ Meteor.methods({
 
 			var resultsJSON = JSON.parse(results.content);
 
+			var showList = [];
+			var tempShow = null;
+
 			var show, schedule, apiId, officialName, type, language, status, runtime, premiered, scheduleTime, network, country, imdbId, imageSmallURL, imageURL, summary, showId, genres, scheduleDays;
 			for (var i = 0; i < resultsJSON.length; i++) {
 				try{
@@ -224,12 +227,17 @@ Meteor.methods({
 
 					showId = Meteor.call('shows.insert', apiId, officialName, type, genres, language, status, runtime, premiered, scheduleTime, scheduleDays, network, country, imdbId, imageSmallURL, imageURL, summary, updatedId, rating);
 					Meteor.call('episodes.search', showId, apiId);
-						} catch(e) {
-							console.log(e);
-						}
-					}
 
-				return true;
+					tempShow = Shows.findOne({ _id: { $eq: showId} });
+				} catch(e) {
+					console.log(e);
+					tempShow = Shows.findOne({ apiId: { $eq: apiId} });
+				} finally {
+					showList.push(tempShow);
+				}
+			} 
+
+				return showList;
 			} catch (e) {
 			      // Got a network error, timeout, or HTTP error in the 400 or 500 range.
 			      console.log(e);
@@ -251,8 +259,8 @@ Meteor.methods({
 			'shows.getShowsByName'(name){
 				try{
 					//FIGURE OUT REGEXXXX
-					var regex =  ".*name.*";
-					var results = Shows.find({ name: { $regex: regex} })
+					var regex =  '/.*' + name + '.*/i';
+					var results = Shows.find({ name: { $regex: regex} }).fetch();
 				} catch(e) {
 					console.log(e);
 					return [];

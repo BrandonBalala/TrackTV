@@ -14,30 +14,90 @@ import ShowEpisodes from './ShowEpisodes.jsx';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 
 import smoothScroll from 'smoothscroll';
-import { Card, Segment, Divider, Container, Grid } from 'semantic-ui-react';
+import { Card, Segment, Divider, Container, Grid, Search } from 'semantic-ui-react';
 
 @autobind
 class App extends Component{
 
 	constructor(props) {
 		super(props);
-
-		this.state = {
-      activeShow: null,
-    };
   }
 
 handleSubmit(event){
   event.preventDefault();
 
-	    // Find the text field via the React ref
-	    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
+  this.resetActiveShowSection();
 
-	    Meteor.call('shows.search', text);
+  // Find the text field via the React ref
+  const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
 
-	    // Clear form
-	    ReactDOM.findDOMNode(this.refs.textInput).value = '';
-   }
+  Meteor.call('shows.search', text, (error, result) => {
+    console.log('ERROR');
+    console.log(error);
+    console.log('RESULT');
+    console.log(result);
+    /*this.searchShowsDB(text);*/
+
+      var shows = result.map((show) => {
+       return (
+        <Show 
+        key={show._id} 
+        show={show}
+        modifyActiveShow={this.modifyActiveShow.bind(this)} 
+        />
+        );
+      });
+
+      ReactDOM.render(
+          {shows}
+          ,
+          document.getElementById('showsSection')
+      );
+  });
+
+  // Clear form
+  ReactDOM.findDOMNode(this.refs.textInput).value = '';
+}
+
+/*resetComponent(){
+  this.setState({ isLoading: false, results: [], value: '' });
+}*/  
+
+/*handleSearchChange(e, { value }) {
+  this.setState({ isLoading: true, value: value })
+
+  setTimeout(() => {
+    if (this.state.value.length < 1){
+      this.resetComponent();
+      return null;
+    }
+
+    Meteor.call('shows.search', value, (error, result) => {
+      console.log('ERROR');
+      console.log(error);
+      console.log('RESULT');
+      console.log(result);
+
+      this.setState({
+        isLoading: false,
+        results: result,
+      });
+    });
+  }, 500)
+}*/
+
+/*handleResultSelect(e, { result }){
+  this.setState({ value: result.name });
+  console.log(result);
+}*/
+
+/*searchShowsDB(text){
+  console.log('in searchShowsDB');
+  var regex =  '.*' + text + '.*';
+  console.log(regex);
+  var results = Shows.find({ name: { $regex: regex, $options: 'i' } }).fetch();
+  console.log(results);
+}*/
 
 renderShows() {
   return this.props.shows.map((show) => {
@@ -78,6 +138,14 @@ renderShows() {
     smoothScroll(episodeSection);
   }
 
+  resetActiveShowSection(){
+    ReactDOM.render(
+        null
+      ,
+      document.getElementById('activeShowSection')
+    );
+  }
+
   render() {
     return (
      <Container>
@@ -90,10 +158,10 @@ renderShows() {
      placeholder="Lookup Shows"
      />
      </form>
-          {/*<Link to="/profile">MY PROFILE</Link>  */} 
+      {/*<Link to="/profile">MY PROFILE</Link>  */} 
      </header>
 
-     <Grid className="showGrid" container stretched={true} textAlign='center' verticalAlign='middle' relaxed>
+     <Grid id="showsSection" className="showGrid" container stretched={true} textAlign='center' verticalAlign='middle' relaxed>
      {this.renderShows()}
      </Grid>
 
@@ -110,7 +178,6 @@ renderShows() {
 
 App.propTypes = {
   shows: PropTypes.array.isRequired,
-  activeShow: PropTypes.number,
   currentUser: PropTypes.object,
 };
 
