@@ -35,7 +35,11 @@ class Show extends Component {
     return (
       <Grid.Column id={this.props.show._id} stretched={true} computer={4} mobile={8} tablet={4}>
         <Segment className='showSegment hvr-shadow-radial' id={this.props.show._id} onClick={this.props.modifyActiveShow.bind(this)} color='grey'>
-            <Image src={this.props.show.imageSmallURL} shape='rounded'/>
+            { this.props.show.imageSmallURL ? 
+              <Image className='showImage' src={this.props.show.imageSmallURL} shape='rounded'/>
+              :
+              <Image className='showImage' src='/images/default.png' shape='rounded'/>
+            }
             <Label attached='bottom'>{this.props.show.name}</Label>
             {this.renderProgressLabel()}
         </Segment>

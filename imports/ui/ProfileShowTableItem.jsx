@@ -78,9 +78,9 @@ export default createContainer((props) => {
 	const userId = Meteor.user()._id;
 
 
-	if(props.updateShows){
+	/*if(props.updateShows){
 		Meteor.call('shows.update', props.showId);
-	}
+	}*/
 
 	return {
 		show: Shows.findOne({_id: { $eq: showId }}),

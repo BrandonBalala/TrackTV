@@ -30,8 +30,8 @@ class FixedMenu extends Component{
           <Menu.Item>
             <Icon className='hvr-buzz' name='eye' size='large' color='grey'/>
           </Menu.Item>
-          <Menu.Item as='a' href={'/'}>Home</Menu.Item>
-          <Menu.Item as='a' href={'/profile/'}>Profile</Menu.Item>
+          <Menu.Item as='a'><Link to="/">Home</Link></Menu.Item>
+          <Menu.Item as='a'><Link to="/profile">Profile</Link></Menu.Item>
           <Menu.Item as='a'>Genre</Menu.Item>
           <Menu.Menu position='right'>
             <Menu.Item className='item'>

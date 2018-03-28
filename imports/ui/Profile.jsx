@@ -23,27 +23,24 @@ class Profile extends Component{
     this.state = {
       activeItem: 'all',
       activeShow: null,
-      updateShows: true,
     };
   }
 
   componentDidMount() {
     console.log('getUserAndShows');
-    /*this.renderTableItems();*/
   }
 
   handleItemClick(event, {id}){
     console.log('status: ' + id);
-    var updateCntr = this.state.updateCntr;
-    updateCntr++;
-    this.setState({ activeItem: id, updateShows: false });
+    this.setState({ activeItem: id });
   }
 
   modifyActiveShow(event){
+    this.resetActiveShowSection();
     var showId = event.target.parentElement.id;
     ReactDOM.render(
       <Segment piled raised>
-        <ShowEpisodes 
+        <ShowEpisodes
           showId={showId}
         />
       </Segment>
@@ -55,7 +52,16 @@ class Profile extends Component{
     smoothScroll(episodeSection);
   }
 
+  resetActiveShowSection(){
+		console.log('IN resetActiveShowSection');
+    var tempSection = document.getElementById('showEpisodesContainer');
+		console.log(tempSection);
 
+    if (tempSection != null) {
+			console.log('resetActiveShowSection');
+      ReactDOM.unmountComponentAtNode(tempSection);
+    }
+  }
 
   renderTableItems(){
     var trackedShows = this.filterShows();
@@ -83,14 +89,14 @@ class Profile extends Component{
     var shows = trackedShows.map((trackedShow) => {
       var showId = trackedShow.showId;
       cntr++;
+
       return (
-        <ProfileShowTableItem 
+        <ProfileShowTableItem
         cntr={cntr}
         key={trackedShow._id}
         trackedShow={trackedShow}
         showId={showId}
         modifyActiveShow={this.modifyActiveShow.bind(this)}
-        updateShows={this.state.updateShows} 
         />
       );
     });
@@ -136,51 +142,51 @@ class Profile extends Component{
 
   render() {
     return (
-     <div className="container">
-       <Header as='h2' icon textAlign='center' className="profileHeader">
-        <Icon name='user' circular />
-        <Header.Content>
-          {this.props.user ? "WELCOME " + this.props.user.username : "USER NOT FOUND"}
-        </Header.Content>
-        </Header>
+			<div className="container">
+				<Header as='h2' icon textAlign='center' className="profileHeader">
+					<Icon name='user' circular />
+					<Header.Content>
+						{this.props.user ? "WELCOME " + this.props.user.username : "USER NOT FOUND"}
+					</Header.Content>
+				</Header>
 
-       <Menu pointing>
-        <Menu.Item id='all' name='all' active={this.state.activeItem === 'all'} onClick={this.handleItemClick.bind(this)} />
-        <Menu.Item id='watching' name='currentlyWatching' active={this.state.activeItem === 'watching'} onClick={this.handleItemClick.bind(this)} />
-        <Menu.Item id='planToWatch' name='planToWatch' active={this.state.activeItem === 'planToWatch'} onClick={this.handleItemClick.bind(this)} />
-        {/*<Menu.Item id='dropped' name='dropped' active={this.state.activeItem === 'dropped'} onClick={this.handleItemClick.bind(this)} />*/}
-        <Menu.Item id='onHold' name='onHold' active={this.state.activeItem === 'onHold'} onClick={this.handleItemClick.bind(this)} />
-        <Menu.Item id='completed' name='completed' active={this.state.activeItem === 'completed'} onClick={this.handleItemClick.bind(this)} />
-        <Menu.Menu position='right'>
-        <Menu.Item>
-        <Input icon='search' placeholder='Search...' />
-        </Menu.Item>
-        </Menu.Menu>
-        </Menu>
+				<Menu pointing>
+					<Menu.Item id='all' name='all' active={this.state.activeItem === 'all'} onClick={this.handleItemClick.bind(this)} />
+					<Menu.Item id='watching' name='currentlyWatching' active={this.state.activeItem === 'watching'} onClick={this.handleItemClick.bind(this)} />
+					<Menu.Item id='planToWatch' name='planToWatch' active={this.state.activeItem === 'planToWatch'} onClick={this.handleItemClick.bind(this)} />
+					{/*<Menu.Item id='dropped' name='dropped' active={this.state.activeItem === 'dropped'} onClick={this.handleItemClick.bind(this)} />*/}
+					<Menu.Item id='onHold' name='onHold' active={this.state.activeItem === 'onHold'} onClick={this.handleItemClick.bind(this)} />
+					<Menu.Item id='completed' name='completed' active={this.state.activeItem === 'completed'} onClick={this.handleItemClick.bind(this)} />
+					<Menu.Menu position='right'>
+						<Menu.Item>
+							<Input icon='search' placeholder='Search...' />
+						</Menu.Item>
+					</Menu.Menu>
+				</Menu>
 
-        {this.props.shows ?
-          <Table selectable compact>
-            <Table.Header>
-            <Table.Row>
-            <Table.HeaderCell>#</Table.HeaderCell>
-            <Table.HeaderCell>Image</Table.HeaderCell>
-            <Table.HeaderCell>Title</Table.HeaderCell>
-            <Table.HeaderCell>Status</Table.HeaderCell>
-            <Table.HeaderCell>Progress</Table.HeaderCell>
-            </Table.Row>
-            </Table.Header>
+				{this.props.shows ?
+					<Table selectable compact>
+						<Table.Header>
+							<Table.Row>
+								<Table.HeaderCell>#</Table.HeaderCell>
+								<Table.HeaderCell>Image</Table.HeaderCell>
+								<Table.HeaderCell>Title</Table.HeaderCell>
+								<Table.HeaderCell>Status</Table.HeaderCell>
+								<Table.HeaderCell>Progress</Table.HeaderCell>
+							</Table.Row>
+						</Table.Header>
 
-            {/*<div id="tableItems"></div>*/}
-            {this.renderTableItems()}
-          </Table>
-          :
-          <h2>No shows found</h2>
-        }
+						{/*<div id="tableItems"></div>*/}
+						{this.renderTableItems()}
+					</Table>
+					:
+					<h2>No shows found</h2>
+				}
 
-        <div className="showEp">
-          <div id="activeShowSection"></div>
-        </div>
-      </div>
+				<div className="showEp">
+					<div id="activeShowSection"></div>
+				</div>
+			</div>
      );
   }
 }
@@ -202,11 +208,11 @@ export default createContainer((props) => {
     return {
       user: user,
       shows: TrackedShows.find({ userId: { $eq: userId } }).fetch()
-    };  
+    };
   }
 
   return {
     user: null,
-    shows: [], 
+    shows: [],
   };
 }, Profile);

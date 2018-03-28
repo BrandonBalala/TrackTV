@@ -83,3 +83,7 @@ form {
     padding-top: 15px !important;
     padding-bottom: 15px !important;
 }
+
+.showImage {
+    /*max-height: 100px !important;*/
+ }

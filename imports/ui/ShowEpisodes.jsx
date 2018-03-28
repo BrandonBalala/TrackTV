@@ -33,7 +33,7 @@ class ShowEpisodes extends Component{
   	unmarkEntireShow(event){
   		let userId = this.props.currentUser._id;
   		let showId = this.props.showId;
-  		
+
 	    Meteor.call('history.unmarkEntireShow', userId, showId, (error, result) => {});
 
   		console.log('done unmarking entire show');
@@ -195,24 +195,45 @@ class ShowEpisodes extends Component{
 		}
 	}
 
-	renderSeasons(){
-		return this.state.seasons.map(
-			(season) => 
-			{
-				var showId = this.props.showId;
-				var trackedShow = this.props.trackedShows ? true : false;
+	/////////////////////
 
-				return(
-						//acordion
-						<Season
-						key={season}
-						season={season}
-						showId={showId}
-						trackedShow={trackedShow}
-						/>
-						);
-			}
+	renderSeasonsSection(seasonNumber){
+		console.log('renderSeasonsSection');
+		console.log('seasonNumber: ' + seasonNumber);
+		console.log(seasonNumber);
+
+		if (seasonNumber != null) {
+			console.log('Rendereding seasons!');
+			var seasons = seasonNumber.map(
+				(season) =>
+				{
+					console.log(season);
+
+					var showId = this.props.showId;
+					var trackedShow = this.props.trackedShows ? true : false;
+					return(
+							//acordion
+							<Season
+							key={season}
+							season={season}
+							showId={showId}
+							trackedShow={trackedShow}
+							/>
+							);
+				}
 			);
+
+			console.log('SEASONS HTML: ');
+			console.log(seasons);
+
+			ReactDOM.render(
+				<div>
+					{ seasons }
+				</div>
+	      ,
+	      document.getElementById('seasonSection')
+	    );
+		}
 	}
 
 	renderRating(){
@@ -220,7 +241,7 @@ class ShowEpisodes extends Component{
 
 		return (
 			<div>
-	    	{ rating ? 
+	    	{ rating ?
 	    		<Rating rating={rating} maxRating={10} icon='star' size='mini' disabled/>
 	    	:
 	    		<Rating defaultRating={0} maxRating={5} icon='star' size='mini' disabled/>
@@ -241,36 +262,61 @@ class ShowEpisodes extends Component{
 			this.renderShowStatusButton();
 
 		this.getSeasonList(showId);
+		Meteor.call('shows.update', showId);
 	}
-	
+
 	componentWillReceiveProps(nextProps){
 		if(this.props.showId != nextProps.showId){
 			console.log('componentWillReceiveProps');
 			var showId = nextProps.showId;
 			var apiId = nextProps.show['apiId'];
 
-			this.getSeasonList(showId);
-
 			if(nextProps.trackedShows){
 				this.renderShowStatusButton(nextProps.trackedShows.status);
 			} else {
 				this.renderShowStatusButton();
 			}
+
+			this.getSeasonList(showId);
+			Meteor.call('shows.update', showId);
+		}
+	}
+
+	componentDidUpdate(prevProps, prevState) {
+		if(this.props.showId != prevProps.showId){
+			console.log('componentDidUpdate');
+			var showId = this.props.showId;
+			var apiId = this.props.show['apiId'];
+
+			if(this.props.trackedShows){
+				this.renderShowStatusButton(this.props.trackedShows.status);
+			} else {
+				this.renderShowStatusButton();
+			}
+
+			this.getSeasonList(showId);
+			Meteor.call('shows.update', showId);
 		}
 	}
 
 	getSeasonList(showId){
 		Meteor.call('episodes.getUniqueField', "season", showId, (error, result) => {
-			this.setState({seasons: result});
+			//this.setState({seasons: result});
+			console.log('getSeasonList() - # of seasons : ' + result);
+			this.renderSeasonsSection(result).bind(this);
 		});
 	}
 
 	render(){
 		return(
-			<div>
+			<div id="showEpisodesContainer">
 					<Grid>
 					    <Grid.Column computer={4} tablet={4} mobile={16} textAlign='center' verticalAlign='middle'>
-					      <Image src={this.props.show.imageSmallURL} shape='rounded' bordered={true} centered />
+					      	{ this.props.show.imageSmallURL ?
+						      	<Image src={this.props.show.imageSmallURL} shape='rounded' bordered={true} centered />
+						      	:
+						      	<Image src='/images/default.png' shape='rounded' bordered={true} centered />
+					    	}
 					    </Grid.Column>
 					    <Grid.Column computer={9} tablet={8} mobile={12} verticalAlign='middle'>
 					      	<h1>{this.props.show.name}</h1>
@@ -289,7 +335,7 @@ class ShowEpisodes extends Component{
 				  	</Grid>
 				  	<br/>
 					<div>
-						{ this.props.currentUser ?
+						{ this.props.trackedShows ?
 						  	<List>
 		  				    	<List.Item>
 							      <List.Content floated='right'>
@@ -301,7 +347,8 @@ class ShowEpisodes extends Component{
 		    				</List>
 	    				:
 	    				'' }
-						{this.renderSeasons()}
+						{/*this.renderSeasonsSection()*/}
+						<div id="seasonSection"></div>
 					</div>
 			</div>
 		);
@@ -328,4 +375,3 @@ export default createContainer((props) => {
 		trackedShows: TrackedShows.findOne({$and: [{userId: { $eq: userId } }, {showId: { $eq: showId }}]}),
 	};
 }, ShowEpisodes)
-

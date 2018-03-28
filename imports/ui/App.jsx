@@ -26,18 +26,10 @@ class App extends Component{
 handleSubmit(event){
   event.preventDefault();
 
-  this.resetActiveShowSection();
-
   // Find the text field via the React ref
   const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
 
   Meteor.call('shows.search', text, (error, result) => {
-    console.log('ERROR');
-    console.log(error);
-    console.log('RESULT');
-    console.log(result);
-    /*this.searchShowsDB(text);*/
-
       var shows = result.map((show) => {
        return (
         <Show 
@@ -124,9 +116,12 @@ renderShows() {
       }
     });
 
+    var key = activeShow + "Shows";
+
     ReactDOM.render(
       <Segment piled raised>
-        <ShowEpisodes 
+        <ShowEpisodes
+        key={key} 
         showId={activeShow}
         />
       </Segment>
@@ -158,7 +153,6 @@ renderShows() {
      placeholder="Lookup Shows"
      />
      </form>
-      {/*<Link to="/profile">MY PROFILE</Link>  */} 
      </header>
 
      <Grid id="showsSection" className="showGrid" container stretched={true} textAlign='center' verticalAlign='middle' relaxed>
