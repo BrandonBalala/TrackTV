@@ -2,7 +2,11 @@
 
 Web application which allows you to track your viewing progress of any tv show.
 
-![Homepage](https://i.imgur.com/S1SrEJv.gifv)
+
+![Homepage](https://i.imgur.com/jWsczLx.png)
+[Demo GIF](https://i.imgur.com/S1SrEJv.gifv)
+
+
 ![Profile page](https://i.imgur.com/HbayTSu.png)
 
 ### Prerequisites
